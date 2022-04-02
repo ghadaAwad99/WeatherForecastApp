@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_settings">إعدادات التطبيق</string>
+    <string name="initial_setup">تهيئة الإعدادات</string>
+    <string name="language">اللغة</string>
+    <string name="location">الموقع</string>
+    <string name="temperature">درجة الحرارة</string>
+    <string name="wind_speed">سرعة الرياح</string>
+    <string name="english">الانجليزية</string>
+    <string name="arabic">العربية</string>
+    <string name="gps">موقعي الحالي</string>
+    <string name="map">الخريطة</string>
+    <string name="kelvin">كلفن</string>
+    <string name="fehrenheit">فهرنهايت</string>
+    <string name="celsius">سيليزيس</string>
+    <string name="meter_sec">متر/ثانية</string>
+    <string name="miles_hour">ميل/ساعة</string>
+    <string name="DONE">موافق</string>
+    <string name="home">الرئيسية</string>
+    <string name="settings">الإعدادات</string>
+    <string name="favorite">المفضلة</string>
+    <string name="alerts">التنبيهات</string>
+    <string name="how_do_you_want_to_choose_location">اختر طريقة تحديد الموقع</string>
+    <string name="today">اليوم</string>
+    <string name="now">الآن</string>
+</resources>

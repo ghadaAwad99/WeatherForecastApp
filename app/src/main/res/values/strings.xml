@@ -1,0 +1,31 @@
+<resources>
+    <string name="app_name">WeatherForcast</string>
+    <string name="close" translatable="false">close</string>
+    <string name="open" translatable="false">open</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment" translatable="false">Hello blank fragment</string>
+    <string name="app_settings">App Settings</string>
+    <string name="initial_setup">Initial Setup</string>
+    <string name="language">Language</string>
+    <string name="location">Location</string>
+    <string name="temperature">Temperature</string>
+    <string name="wind_speed">Wind Speed</string>
+    <string name="english">English</string>
+    <string name="arabic">Arabic</string>
+    <string name="gps">GPS</string>
+    <string name="map">Map</string>
+    <string name="kelvin">kelvin</string>
+    <string name="celsius">celsius</string>
+    <string name="fehrenheit">fehrenheit</string>
+    <string name="meter_sec">meter/sec</string>
+    <string name="miles_hour">miles/hour</string>
+    <string name="DONE">DONE</string>
+    <string name="home">home</string>
+    <string name="settings">settings</string>
+    <string name="favorite">Favorite</string>
+    <string name="alerts">Alerts</string>
+    <string name="how_do_you_want_to_choose_location">How do you want to choose location</string>
+    <string name="shared_prefs" translatable="false">sharedPrefs</string>
+    <string name="today">Today</string>
+    <string name="now">Now</string>
+</resources>

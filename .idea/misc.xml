@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="DesignSurface">
+    <option name="filePathToZoomLevelMap">
+      <map>
+        <entry key="..\:/Ghada/ITI/Kotlin/WeatherForcast/app/src/main/res/drawable/actionbarbground.xml" value="0.2703125" />
+        <entry key="..\:/Ghada/ITI/Kotlin/WeatherForcast/app/src/main/res/drawable/customborder.xml" value="0.2703125" />
+        <entry key="..\:/Ghada/ITI/Kotlin/WeatherForcast/app/src/main/res/drawable/gradient.xml" value="0.12962962962962962" />
+        <entry key="..\:/Ghada/ITI/Kotlin/WeatherForcast/app/src/main/res/drawable/ic_add.xml" value="0.2703125" />
+        <entry key="..\:/Ghada/ITI/Kotlin/WeatherForcast/app/src/main/res/drawable/ic_cloudy_cloud_svgrepo_com.xml" value="0.264" />
+        <entry key="..\:/Ghada/ITI/Kotlin/WeatherForcast/app/src/main/res/drawable/ic_tornado_.xml" value="0.2703125" />
+        <entry key="..\:/Ghada/ITI/Kotlin/WeatherForcast/app/src/main/res/drawable/ripple.xml" value="0.2703125" />
+        <entry key="..\:/Ghada/ITI/Kotlin/WeatherForcast/app/src/main/res/layout-v28/activity_main.xml" value="0.25416666666666665" />
+        <entry key="..\:/Ghada/ITI/Kotlin/WeatherForcast/app/src/main/res/layout/activity_alerts.xml" value="0.536" />
+        <entry key="..\:/Ghada/ITI/Kotlin/WeatherForcast/app/src/main/res/layout/activity_drawer.xml" value="0.25416666666666665" />
+        <entry key="..\:/Ghada/ITI/Kotlin/WeatherForcast/app/src/main/res/layout/activity_favorite.xml" value="0.28892835997631733" />
+        <entry key="..\:/Ghada/ITI/Kotlin/WeatherForcast/app/src/main/res/layout/activity_home_screen.xml" value="0.34572490706319703" />
+        <entry key="..\:/Ghada/ITI/Kotlin/WeatherForcast/app/src/main/res/layout/activity_main.xml" value="0.2853107344632768" />
+        <entry key="..\:/Ghada/ITI/Kotlin/WeatherForcast/app/src/main/res/layout/activity_settings.xml" value="0.1" />
+        <entry key="..\:/Ghada/ITI/Kotlin/WeatherForcast/app/src/main/res/layout/activity_splash_screen.xml" value="0.536" />
+        <entry key="..\:/Ghada/ITI/Kotlin/WeatherForcast/app/src/main/res/layout/customborder.xml" value="0.25416666666666665" />
+        <entry key="..\:/Ghada/ITI/Kotlin/WeatherForcast/app/src/main/res/layout/day_item.xml" value="0.72" />
+        <entry key="..\:/Ghada/ITI/Kotlin/WeatherForcast/app/src/main/res/layout/fragment_home.xml" value="0.23629935179728934" />
+        <entry key="..\:/Ghada/ITI/Kotlin/WeatherForcast/app/src/main/res/layout/fragment_settings.xml" value="0.25416666666666665" />
+        <entry key="..\:/Ghada/ITI/Kotlin/WeatherForcast/app/src/main/res/layout/hour_item.xml" value="0.536" />
+        <entry key="..\:/Ghada/ITI/Kotlin/WeatherForcast/app/src/main/res/layout/nav_header.xml" value="0.6" />
+        <entry key="..\:/Ghada/ITI/Kotlin/WeatherForcast/app/src/main/res/menu/menu.xml" value="0.1" />
+        <entry key="..\:/Ghada/ITI/Kotlin/WeatherForcast/app/src/main/res/menu/nav_menu.xml" value="0.536" />
+      </map>
+    </option>
+  </component>
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_11" default="true" project-jdk-name="Android Studio default JDK" project-jdk-type="JavaSDK">
+    <output url="file://$PROJECT_DIR$/build/classes" />
+  </component>
+  <component name="ProjectType">
+    <option name="id" value="Android" />
+  </component>
+</project>
