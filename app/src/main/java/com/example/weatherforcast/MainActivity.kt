@@ -1,27 +1,30 @@
 package com.example.weatherforcast
 
 import android.content.Intent
-import android.content.SharedPreferences
 import android.graphics.Color
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Button
 import com.example.weatherforcast.home.view.HomeScreen
 import android.graphics.drawable.ColorDrawable
-import android.os.Build
+import android.view.View
 import android.widget.RadioButton
 import android.widget.RadioGroup
 import android.widget.Toast
 import androidx.appcompat.app.ActionBar
+import com.example.weatherforcast.home.view.MapsActivity
 import java.util.*
 
 
 class MainActivity : AppCompatActivity() {
+    lateinit var locationRadioGroup: RadioGroup
+    lateinit var locationRadioButton:RadioButton
     override fun onCreate(savedInstanceState: Bundle?) {
-        lateinit var radioButton: RadioButton
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        locationRadioGroup = findViewById(R.id.location_radio_group)
         val sharedPreferences = getSharedPreferences(getString(R.string.shared_prefs), MODE_PRIVATE)
+        val editor = sharedPreferences.edit()
         //set language as the last selected
        /* var lang = sharedPreferences.getString("LANGUAGE", "en")
         val config = resources.configuration
@@ -53,7 +56,24 @@ class MainActivity : AppCompatActivity() {
 
         //Utilities.changeLanguage(lang.toString(), this)
 
+        locationRadioGroup.setOnCheckedChangeListener { group, checkedId ->
+            locationRadioButton = findViewById<View>(checkedId) as RadioButton
+            Toast.makeText(this, locationRadioButton.text, Toast.LENGTH_SHORT).show()
+            editor.putString("LOCATION", locationRadioButton.text.toString())
+            editor.apply()
 
+            when(locationRadioButton.text.toString()){
+                getString(R.string.map) -> {
+                    intent = Intent(this, MapsActivity::class.java)
+                    intent.putExtra("source", "HOME")
+                    startActivity(intent)
+
+                finish()}
+                getString(R.string.gps)->{ startActivity(Intent(this, HomeScreen::class.java))
+                    finish()}
+            }
+
+        }
 
 
 
@@ -61,13 +81,13 @@ class MainActivity : AppCompatActivity() {
         val okButton: Button = findViewById(R.id.ok_button)
         val radioGroup: RadioGroup = findViewById(R.id.location_radio_group)
         okButton.setOnClickListener {
-            val selectedId = radioGroup.checkedRadioButtonId
+          /*  val selectedId = radioGroup.checkedRadioButtonId
             radioButton = findViewById(selectedId)
             Toast.makeText(this@MainActivity, radioButton.text, Toast.LENGTH_SHORT).show()
             //save location choice on shared prefs
             val editor = sharedPreferences.edit()
             editor.putString("LOCATION", radioButton.text.toString())
-            editor.apply()
+            editor.apply()*/
 
             val intent = Intent(this@MainActivity, HomeScreen::class.java)
             startActivity(intent)

@@ -15,6 +15,7 @@ import com.example.weatherforcast.Utilities
 import com.example.weatherforcast.alerts.view.AlertsActivity
 import com.example.weatherforcast.favorite.view.FavoriteActivity
 import com.example.weatherforcast.home.view.HomeScreen
+import com.example.weatherforcast.home.view.MapsActivity
 import com.google.android.material.navigation.NavigationView
 import java.util.*
 
@@ -73,11 +74,20 @@ class SettingsActivity : AppCompatActivity() {
             startActivity(Intent(this, SettingsActivity::class.java))*/
         }
 
+
+
         locationRadioGroup.setOnCheckedChangeListener { group, checkedId ->
             locationRadioButton = findViewById<View>(checkedId) as RadioButton
             Toast.makeText(this, locationRadioButton.text, Toast.LENGTH_SHORT).show()
             editor.putString("LOCATION", locationRadioButton.text.toString())
             editor.apply()
+            when(locationRadioButton.text.toString()){
+
+                getString(R.string.map) -> {startActivity(Intent(this, MapsActivity::class.java))
+                    finish()}
+                getString(R.string.gps)->{ startActivity(Intent(this, HomeScreen::class.java))
+                    finish()}
+            }
         }
 
         tempRadioGroup.setOnCheckedChangeListener { group, checkedId ->

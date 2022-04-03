@@ -23,4 +23,8 @@
     <string name="how_do_you_want_to_choose_location">اختر طريقة تحديد الموقع</string>
     <string name="today">اليوم</string>
     <string name="now">الآن</string>
+    <string name="title_activity_maps">الخريطة</string>
+    <string name="yes">نعم</string>
+    <string name="no">لا</string>
+    <string name="do_you_want_to_choose_this_place">هل تريد اختيار الموقع التالي؟</string>
 </resources>

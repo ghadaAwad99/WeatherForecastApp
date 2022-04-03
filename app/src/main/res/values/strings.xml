@@ -28,4 +28,8 @@
     <string name="shared_prefs" translatable="false">sharedPrefs</string>
     <string name="today">Today</string>
     <string name="now">Now</string>
+    <string name="title_activity_maps">MapsActivity</string>
+    <string name="yes">yes</string>
+    <string name="no">no</string>
+    <string name="do_you_want_to_choose_this_place">"Do you want to choose this place? "</string>
 </resources>

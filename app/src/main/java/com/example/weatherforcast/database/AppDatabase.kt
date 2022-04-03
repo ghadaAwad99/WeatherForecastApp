@@ -4,12 +4,15 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import androidx.room.TypeConverters
 import com.example.weatherforcast.model.FavoriteModel
 import com.example.weatherforcast.model.WeatherModel
 
 @Database(entities = [FavoriteModel::class , WeatherModel::class], version = 1)
+@TypeConverters(Converters::class)
 abstract class AppDatabase : RoomDatabase(){
-    abstract fun weatherDAO() : FavDAO
+    abstract fun weatherDAO() : WeatherDAO
+    abstract fun favDAO() : FavDAO
 
     companion object{
         private var instance : AppDatabase? =null

@@ -35,8 +35,11 @@ import java.text.SimpleDateFormat
 import java.util.*
 import android.location.Geocoder
 import androidx.appcompat.app.ActionBar
+import com.example.weatherforcast.Utilities
 import com.example.weatherforcast.alerts.view.AlertsActivity
+import com.example.weatherforcast.database.ConcreteLocalSource
 import com.example.weatherforcast.favorite.view.FavoriteActivity
+import com.example.weatherforcast.network.WeatherService
 import com.example.weatherforcast.settings.SettingsActivity
 import java.io.IOException
 import java.lang.StringBuilder
@@ -58,6 +61,7 @@ class HomeScreen : AppCompatActivity() {
     lateinit var sharedPreferences : SharedPreferences
     lateinit var lang:String
     lateinit var temp:String
+    lateinit var choosenLocation:String
 
     var lat: Double = 0.0
     var lon: Double = 0.0
@@ -72,6 +76,7 @@ class HomeScreen : AppCompatActivity() {
         sharedPreferences = getSharedPreferences(getString(R.string.shared_prefs), MODE_PRIVATE)
         lang = sharedPreferences.getString("LANGUAGE", "en").toString()
         temp = sharedPreferences.getString("TEMP","").toString()
+        choosenLocation = sharedPreferences.getString("LOCATION", getString(R.string.gps)).toString()
 
 
         val actionBar: ActionBar = supportActionBar!!
@@ -80,20 +85,34 @@ class HomeScreen : AppCompatActivity() {
 
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
 
-        recyclerView = findViewById(R.id.days_recyclerView)
+        recyclerView = findViewById(R.id.favorite_recyclerView)
         hoursRecyclerView = findViewById(R.id.hours_recyclerView)
         cityName = findViewById(R.id.city_name)
         dateText = findViewById(R.id.date_text)
         currentIcon = findViewById(R.id.current_weather_icon)
         currentTempText = findViewById(R.id.current_temp_text)
         currentMain = findViewById(R.id.current_main)
+
         homeDaysRecyclerAdapter = HomeDaysRecyclerAdapter()
         homeHoursRecyclerAdapter = HomeHoursRecyclerAdapter()
         recyclerView.adapter = homeDaysRecyclerAdapter
         hoursRecyclerView.adapter = homeHoursRecyclerAdapter
-        viewModel = ViewModelProvider(this, HomeViewModelFactory(Repository.getInstance())).get(
+        viewModel = ViewModelProvider(this, HomeViewModelFactory(Repository.getInstance(
+            WeatherService.getInstance(), ConcreteLocalSource(this), this
+        ))).get(
             HomeViewModel::class.java
         )
+        if (choosenLocation == getString(R.string.gps)){
+            getLastLocation()
+        }else if (choosenLocation == getString(R.string.map)){
+            lat = intent.extras?.get("lat") as Double
+            lon = intent.extras?.get("lon") as Double
+            Toast.makeText(this,"map is choosen and lat is " + lat+ "and lon is " + lon , Toast.LENGTH_SHORT).show()
+            currentAdders = Utilities.getAddress(lat, lon, lang, this)
+            viewModel.getCurrTemp(lat, lon, "8bdc89e28e3ae5c674e20f1d16e70f7d", lang)
+        }
+
+
 
         viewModel.weatherMutableLiveData.observe(this, {
 
@@ -170,7 +189,7 @@ class HomeScreen : AppCompatActivity() {
             true
         }
 
-        getLastLocation()
+
 
 
     }
@@ -209,7 +228,7 @@ class HomeScreen : AppCompatActivity() {
                             lon = -70.1251*/
                             lat = location.latitude
                             lon =location.longitude
-                            currentAdders = getAddress(lat, lon)
+                            currentAdders = Utilities.getAddress(lat, lon, lang, this)
                             /* bundle.putDouble("long",lon)
                              bundle.putDouble("lat", lat)*/
                             Log.i("TAG", "before getCurrTemp")
@@ -305,7 +324,7 @@ class HomeScreen : AppCompatActivity() {
           /*  lat = -64.6240
             lon = -70.1251*/
 
-            currentAdders = getAddress(lat, lon)
+            currentAdders = Utilities.getAddress(lat, lon,lang, this@HomeScreen)
             viewModel.getCurrTemp(lat, lon, "8bdc89e28e3ae5c674e20f1d16e70f7d", lang)
 
             /* bundle.putDouble("long",lon)
@@ -313,29 +332,6 @@ class HomeScreen : AppCompatActivity() {
 
             Log.i("TAG", "onLocationResult lat is " + lat + "lon is " + lon + " and lang is " + lang.toString())
         }
-    }
-
-    private fun getAddress(latitude: Double, longitude: Double): String {
-        val result = StringBuilder()
-        try {
-            val geocoder = Geocoder(this, Locale(lang))
-            val addresses: List<Address> = geocoder.getFromLocation(latitude, longitude, 1)
-            if (addresses.isNotEmpty()) {
-                val address: Address = addresses[0]
-
-                if(address.locality != null && address.locality.isNotEmpty()){
-                    result.append(address.locality)
-                }else if (address.getAddressLine(0) != null && address.getAddressLine(0).isNotEmpty()){
-                    result.append(address.getAddressLine(0))
-                }else{
-                    result.append("Unknown")
-                }
-
-            }
-        } catch (e: IOException) {
-            Log.e("TAG", e.message.toString())
-        }
-        return result.toString()
     }
 
     fun convertToArabic(value: String): String {
