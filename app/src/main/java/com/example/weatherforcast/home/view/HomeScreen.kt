@@ -7,10 +7,8 @@ import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
-import android.location.Address
 import android.location.Location
 import android.location.LocationManager
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Looper
 import android.provider.Settings
@@ -19,30 +17,28 @@ import android.view.MenuItem
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
+import androidx.appcompat.app.ActionBar
 import androidx.appcompat.app.ActionBarDrawerToggle
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.drawerlayout.widget.DrawerLayout
-import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.RecyclerView
-import com.example.weatherforcast.model.Repository
 import com.example.weatherforcast.R
-import com.example.weatherforcast.home.viewModel.HomeViewModel
-import com.example.weatherforcast.home.viewModel.HomeViewModelFactory
-import com.google.android.gms.location.*
-import com.google.android.material.navigation.NavigationView
-import java.text.SimpleDateFormat
-import java.util.*
-import android.location.Geocoder
-import androidx.appcompat.app.ActionBar
 import com.example.weatherforcast.Utilities
 import com.example.weatherforcast.alerts.view.AlertsActivity
 import com.example.weatherforcast.database.ConcreteLocalSource
 import com.example.weatherforcast.favorite.view.FavoriteActivity
+import com.example.weatherforcast.home.viewModel.HomeViewModel
+import com.example.weatherforcast.home.viewModel.HomeViewModelFactory
+import com.example.weatherforcast.model.Repository
 import com.example.weatherforcast.network.WeatherService
 import com.example.weatherforcast.settings.SettingsActivity
-import java.io.IOException
-import java.lang.StringBuilder
+import com.google.android.gms.location.*
+import com.google.android.gms.maps.model.LatLng
+import com.google.android.material.navigation.NavigationView
+import java.text.SimpleDateFormat
+import java.util.*
 
 
 class HomeScreen : AppCompatActivity() {
@@ -52,16 +48,15 @@ class HomeScreen : AppCompatActivity() {
     lateinit var hoursRecyclerView: RecyclerView
     lateinit var viewModel: HomeViewModel
     lateinit var cityName: TextView
-    lateinit var dateText : TextView
-    lateinit var currentTempText : TextView
-    lateinit var currentIcon : ImageView
-    lateinit var currentMain : TextView
-    lateinit var currentAdders:String
-    var bundle = Bundle()
-    lateinit var sharedPreferences : SharedPreferences
-    lateinit var lang:String
-    lateinit var temp:String
-    lateinit var choosenLocation:String
+    lateinit var dateText: TextView
+    lateinit var currentTempText: TextView
+    lateinit var currentIcon: ImageView
+    lateinit var currentMain: TextView
+    lateinit var currentAdders: String
+    lateinit var sharedPreferences: SharedPreferences
+    lateinit var lang: String
+    lateinit var temp: String
+    lateinit var choosenLocation: String
 
     var lat: Double = 0.0
     var lon: Double = 0.0
@@ -73,14 +68,16 @@ class HomeScreen : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_home_screen)
         //replaceFragment(HomeFragment())
+
         sharedPreferences = getSharedPreferences(getString(R.string.shared_prefs), MODE_PRIVATE)
         lang = sharedPreferences.getString("LANGUAGE", "en").toString()
-        temp = sharedPreferences.getString("TEMP","").toString()
-        choosenLocation = sharedPreferences.getString("LOCATION", getString(R.string.gps)).toString()
+        temp = sharedPreferences.getString("TEMP", "").toString()
+        choosenLocation =
+            sharedPreferences.getString("LOCATION", getString(R.string.gps)).toString()
 
 
         val actionBar: ActionBar = supportActionBar!!
-        val colorDrawable = ColorDrawable(Color.parseColor("#FFFFFF"))
+        val colorDrawable = ColorDrawable(Color.parseColor("#5B86E5"))
         actionBar.setBackgroundDrawable(colorDrawable)
 
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
@@ -97,24 +94,51 @@ class HomeScreen : AppCompatActivity() {
         homeHoursRecyclerAdapter = HomeHoursRecyclerAdapter()
         recyclerView.adapter = homeDaysRecyclerAdapter
         hoursRecyclerView.adapter = homeHoursRecyclerAdapter
-        viewModel = ViewModelProvider(this, HomeViewModelFactory(Repository.getInstance(
-            WeatherService.getInstance(), ConcreteLocalSource(this), this
-        ))).get(
+        viewModel = ViewModelProvider(
+            this, HomeViewModelFactory(
+                Repository.getInstance(
+                    WeatherService.getInstance(), ConcreteLocalSource(this), this
+                )
+            )
+        ).get(
             HomeViewModel::class.java
         )
-        if (choosenLocation == getString(R.string.gps)){
-            getLastLocation()
-        }else if (choosenLocation == getString(R.string.map)){
-            lat = intent.extras?.get("lat") as Double
-            lon = intent.extras?.get("lon") as Double
-            Toast.makeText(this,"map is choosen and lat is " + lat+ "and lon is " + lon , Toast.LENGTH_SHORT).show()
-            currentAdders = Utilities.getAddress(lat, lon, lang, this)
-            viewModel.getCurrTemp(lat, lon, "8bdc89e28e3ae5c674e20f1d16e70f7d", lang)
+
+        if (intent.extras?.get("FAV LAT") != null && intent.extras?.get("FAV LON") != null) {
+            lat = (intent.extras?.get("FAV LAT") as Double)
+            lon = (intent.extras?.get("FAV LON") as Double)
+            lang = (intent.extras?.get("FAV LANG") as String)
+            currentAdders = (intent.extras?.get("FAV LOCALITY") as String)
+            viewModel.getCurrTemp(
+                lat,
+                lon,
+                "8bdc89e28e3ae5c674e20f1d16e70f7d",
+                lang
+            )
+        } else {
+            if (choosenLocation == getString(R.string.gps)) {
+                getLastLocation()
+            } else if (choosenLocation == getString(R.string.map)) {
+                var point: LatLng = intent.extras?.get("point") as LatLng
+                Toast.makeText(
+                    this,
+                    "map is choosen and lat is " + point.latitude + "and lon is " + point.longitude,
+                    Toast.LENGTH_SHORT
+                ).show()
+                currentAdders = intent.extras?.get("locality") as String
+                viewModel.getCurrTemp(
+                    point.latitude,
+                    point.longitude,
+                    "8bdc89e28e3ae5c674e20f1d16e70f7d",
+                    lang
+                )
+            }
         }
 
-
-
         viewModel.weatherMutableLiveData.observe(this, {
+            it.id = 0
+            if (intent.extras?.get("FAV LAT") == null && intent.extras?.get("FAV LON") == null)
+                viewModel.insertLastResponse(it)
 
             Log.d("TAG", "onCreate: ${it.daily}")
 
@@ -129,28 +153,28 @@ class HomeScreen : AppCompatActivity() {
             val date = Date(unix_seconds * 1000L)
             // format of the date
             lateinit var jdf: SimpleDateFormat
-            lateinit var temp:String
-            lateinit var unit:String
-            if(lang == "en"){
-                 jdf = SimpleDateFormat("EEE, d MMM")
+            lateinit var temp: String
+            lateinit var unit: String
+            if (lang == "en") {
+                jdf = SimpleDateFormat("EEE, d MMM")
                 temp = it.current.temp.toString()
                 unit = " k"
 
-            }else if (lang == "ar") {
-                 jdf = SimpleDateFormat("EEE, d MMM", Locale("ar"))
-                 temp = convertToArabic(it.current.temp.toString())
-                unit= " ك"
+            } else if (lang == "ar") {
+                jdf = SimpleDateFormat("EEE, d MMM", Locale("ar"))
+                temp = convertToArabic(it.current.temp.toString())
+                unit = " ك"
             }
             jdf.timeZone = TimeZone.getTimeZone("GMT+2")
             val java_date = jdf.format(date).trimIndent()
-          /*  var num = convertToArabic(java_date)
-            Toast.makeText(this, "num is " + num , Toast.LENGTH_SHORT).show()*/
+            /*  var num = convertToArabic(java_date)
+              Toast.makeText(this, "num is " + num , Toast.LENGTH_SHORT).show()*/
             dateText.text = java_date
 
 
-            currentTempText.text =  temp + unit
+            currentTempText.text = temp + unit
 
-            when(it.current.weather[0].main){
+            when (it.current.weather[0].main) {
                 "Clouds" -> currentIcon.setImageResource(R.drawable.current_cloudy)
                 "Clear" -> currentIcon.setImageResource(R.drawable.current_sun)
                 "Thunderstorm" -> currentIcon.setImageResource(R.drawable.cloudy_storm)
@@ -180,16 +204,29 @@ class HomeScreen : AppCompatActivity() {
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         navView.setNavigationItemSelectedListener {
             when (it.itemId) {
-                R.id.nav_home ->startActivity(Intent(this@HomeScreen, HomeScreen::class.java))
-                R.id.nav_settings -> startActivity(Intent(this@HomeScreen, SettingsActivity::class.java))
-                R.id.nav_favorite -> startActivity(Intent(this@HomeScreen, FavoriteActivity::class.java))
-                R.id.nav_alerts -> startActivity(Intent(this@HomeScreen, AlertsActivity::class.java))
+                R.id.nav_home -> startActivity(Intent(this@HomeScreen, HomeScreen::class.java))
+                R.id.nav_settings -> startActivity(
+                    Intent(
+                        this@HomeScreen,
+                        SettingsActivity::class.java
+                    )
+                )
+                R.id.nav_favorite -> startActivity(
+                    Intent(
+                        this@HomeScreen,
+                        FavoriteActivity::class.java
+                    )
+                )
+                R.id.nav_alerts -> startActivity(
+                    Intent(
+                        this@HomeScreen,
+                        AlertsActivity::class.java
+                    )
+                )
 
             }
             true
         }
-
-
 
 
     }
@@ -201,13 +238,13 @@ class HomeScreen : AppCompatActivity() {
         return super.onOptionsItemSelected(item)
     }
 
-    fun replaceFragment(fragment: Fragment) {
+/*    fun replaceFragment(fragment: Fragment) {
         val fragmentManager = supportFragmentManager
         val fragmentTransaction = fragmentManager.beginTransaction()
         fragment.arguments = bundle
         fragmentTransaction.replace(R.id.frame, fragment)
         fragmentTransaction.commit()
-    }
+    }*/
 
 
     //----
@@ -218,35 +255,43 @@ class HomeScreen : AppCompatActivity() {
             if (isLocationEnabled()) {
                 Log.i("TAG", "inside ifff second ")
                 fusedLocationClient.lastLocation
-                    .addOnSuccessListener { location : Location? ->
+                    .addOnSuccessListener { location: Location? ->
                         // Got last known location. In some rare situations this can be null.
                         if (location == null) {
                             requestNewLocationData()
                         } else {
 
-                           /* lat = -64.6240
-                            lon = -70.1251*/
+                            /* lat = -64.6240
+                             lon = -70.1251*/
                             lat = location.latitude
-                            lon =location.longitude
+                            lon = location.longitude
                             currentAdders = Utilities.getAddress(lat, lon, lang, this)
                             /* bundle.putDouble("long",lon)
                              bundle.putDouble("lat", lat)*/
                             Log.i("TAG", "before getCurrTemp")
-                            viewModel.getCurrTemp(lat = lat, lon= lon, key = "8bdc89e28e3ae5c674e20f1d16e70f7d", language = lang)
+                            viewModel.getCurrTemp(
+                                lat = lat,
+                                lon = lon,
+                                key = "8bdc89e28e3ae5c674e20f1d16e70f7d",
+                                language = lang
+                            )
 
-                            Log.i("TAG", "getLastLocation lat is " + lat + "lon is " + lon + " and lang is " + lang.toString())
+                            Log.i(
+                                "TAG",
+                                "getLastLocation lat is " + lat + "lon is " + lon + " and lang is " + lang.toString()
+                            )
                         }
                     }
-             /*   fusedLocationProviderClient?.getLastLocation()
-                    ?.addOnCompleteListener(object : OnCompleteListener<Location> {
-                        override fun onComplete(task: Task<Location>) {
-                            val location: Location = task.getResult()
-                            if (location == null) {
-                                requestNewLocationData()
-                            } else {
-                                lat = location.latitude
-                                lon = location.longitude
-                                *//* bundle.putDouble("long",lon)
+                /*   fusedLocationProviderClient?.getLastLocation()
+                       ?.addOnCompleteListener(object : OnCompleteListener<Location> {
+                           override fun onComplete(task: Task<Location>) {
+                               val location: Location = task.getResult()
+                               if (location == null) {
+                                   requestNewLocationData()
+                               } else {
+                                   lat = location.latitude
+                                   lon = location.longitude
+                                   *//* bundle.putDouble("long",lon)
                                  bundle.putDouble("lat", lat)*//*
                                 Log.i("TAG", "before getCurrTemp")
                                 viewModel.getCurrTemp(lat, lon, "8bdc89e28e3ae5c674e20f1d16e70f7d")
@@ -301,16 +346,17 @@ class HomeScreen : AppCompatActivity() {
         locationRequest.setFastestInterval(5000)
         locationRequest.setNumUpdates(1)
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
-        fusedLocationClient.requestLocationUpdates(locationRequest, locationCallback,
+        fusedLocationClient.requestLocationUpdates(
+            locationRequest, locationCallback,
             Looper.myLooper()!!
         )
-      /*  Looper.myLooper()?.let {
-            fusedLocationProviderClient!!.requestLocationUpdates(
-                locationRequest,
-                locationCallback,
-                it
-            )
-        }*/
+        /*  Looper.myLooper()?.let {
+              fusedLocationProviderClient!!.requestLocationUpdates(
+                  locationRequest,
+                  locationCallback,
+                  it
+              )
+          }*/
     }
 
     private val locationCallback: LocationCallback = object : LocationCallback() {
@@ -321,16 +367,19 @@ class HomeScreen : AppCompatActivity() {
             lon = lastLocation.longitude
 
 
-          /*  lat = -64.6240
-            lon = -70.1251*/
+            /*  lat = -64.6240
+              lon = -70.1251*/
 
-            currentAdders = Utilities.getAddress(lat, lon,lang, this@HomeScreen)
+            currentAdders = Utilities.getAddress(lat, lon, lang, this@HomeScreen)
             viewModel.getCurrTemp(lat, lon, "8bdc89e28e3ae5c674e20f1d16e70f7d", lang)
 
             /* bundle.putDouble("long",lon)
              bundle.putDouble("lat", lat)*/
 
-            Log.i("TAG", "onLocationResult lat is " + lat + "lon is " + lon + " and lang is " + lang.toString())
+            Log.i(
+                "TAG",
+                "onLocationResult lat is " + lat + "lon is " + lon + " and lang is " + lang.toString()
+            )
         }
     }
 

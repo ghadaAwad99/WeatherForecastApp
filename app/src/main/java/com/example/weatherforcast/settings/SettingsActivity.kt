@@ -1,6 +1,8 @@
 package com.example.weatherforcast.settings
 
 import android.content.Intent
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.MenuItem
@@ -8,6 +10,7 @@ import android.view.View
 import android.widget.RadioButton
 import android.widget.RadioGroup
 import android.widget.Toast
+import androidx.appcompat.app.ActionBar
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.drawerlayout.widget.DrawerLayout
 import com.example.weatherforcast.R
@@ -35,6 +38,10 @@ class SettingsActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_settings)
+        this.title = "Settings"
+        val actionBar: ActionBar = supportActionBar!!
+        val colorDrawable = ColorDrawable(Color.parseColor("#5B86E5"))
+        actionBar.setBackgroundDrawable(colorDrawable)
 
         drawerLayout= findViewById(R.id.drawerLayout)
         navView= findViewById(R.id.nav_view)

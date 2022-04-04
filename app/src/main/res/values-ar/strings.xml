@@ -27,4 +27,6 @@
     <string name="yes">نعم</string>
     <string name="no">لا</string>
     <string name="do_you_want_to_choose_this_place">هل تريد اختيار الموقع التالي؟</string>
+    <string name="toast_deleted">تم مسح هذا المكان</string>
+    <string name="app_name">الطقس</string>
 </resources>

@@ -52,17 +52,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, /*GoogleMap.OnMark
 
     private fun showDialog(title: String, point: LatLng) {
 
-        when (intent.extras?.getString("source")) {
-            "FAV" -> {
-                outIntent = Intent(this, FavoriteActivity::class.java)
-                outIntent.putExtra("point", point)
-            }
-            "HOME" -> {
-                outIntent = Intent(this, HomeScreen::class.java)
-                outIntent.putExtra("lat", point.latitude)
-                outIntent.putExtra("lon", point.longitude)
-            }
-        }
+
 
 
         Toast.makeText(
@@ -131,6 +121,24 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, /*GoogleMap.OnMark
         mMap.addMarker(MarkerOptions().position(point))
 
         val location = Utilities.getAddress(point.latitude, point.longitude, lang, this)
+
+
+        when (intent.extras?.getString("source")) {
+            "FAV" -> {
+                outIntent = Intent(this, FavoriteActivity::class.java)
+                outIntent.putExtra("point", point)
+                outIntent.putExtra("locality",location)
+
+
+            }
+            "HOME" -> {
+                outIntent = Intent(this, HomeScreen::class.java)
+                outIntent.putExtra("point", point)
+                outIntent.putExtra("locality",location)
+
+
+            }
+        }
 
         showDialog(getString(R.string.do_you_want_to_choose_this_place) + "\n" + location, point)
 

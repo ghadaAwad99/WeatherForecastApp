@@ -1,12 +1,14 @@
 package com.example.weatherforcast.favorite.view
 
+import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.weatherforcast.databinding.FavoriteItemBinding
 import com.example.weatherforcast.model.FavoriteModel
-import com.example.weatherforcast.model.Hourly
 
-class FavoriteRecyclerAdapter : RecyclerView.Adapter<FavViewHolder>() {
+class FavoriteRecyclerAdapter(private val listener: OnClickListener) :
+    RecyclerView.Adapter<FavViewHolder>() {
+
 
     //get list from ROOM
     private var favoriteList = mutableListOf<FavoriteModel>()
@@ -17,11 +19,17 @@ class FavoriteRecyclerAdapter : RecyclerView.Adapter<FavViewHolder>() {
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FavViewHolder {
-        TODO("Not yet implemented")
+        val inflater = LayoutInflater.from(parent.context)
+        val binding = FavoriteItemBinding.inflate(inflater, parent, false)
+        return FavViewHolder(binding)
     }
 
     override fun onBindViewHolder(holder: FavViewHolder, position: Int) {
-        TODO("Not yet implemented")
+        val favItem = favoriteList[position]
+
+        holder.binding.localityText.text = favItem.locality
+        holder.binding.deleteButton.setOnClickListener { listener.onDeleteClick(favItem) }
+        holder.binding.cardView.setOnClickListener { listener.onDisplayClick(favItem) }
     }
 
     override fun getItemCount() = favoriteList.size

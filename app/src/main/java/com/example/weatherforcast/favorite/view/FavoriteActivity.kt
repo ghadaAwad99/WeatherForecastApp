@@ -1,9 +1,12 @@
 package com.example.weatherforcast.favorite.view
 
 import android.content.Intent
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
-import android.util.Log
 import android.view.MenuItem
+import android.widget.Toast
+import androidx.appcompat.app.ActionBar
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.drawerlayout.widget.DrawerLayout
@@ -14,17 +17,17 @@ import com.example.weatherforcast.alerts.view.AlertsActivity
 import com.example.weatherforcast.database.ConcreteLocalSource
 import com.example.weatherforcast.favorite.viewModel.FavoriteViewModel
 import com.example.weatherforcast.favorite.viewModel.FavoriteViewModelFactory
-import com.example.weatherforcast.home.view.HomeDaysRecyclerAdapter
-import com.example.weatherforcast.home.view.HomeHoursRecyclerAdapter
 import com.example.weatherforcast.home.view.HomeScreen
 import com.example.weatherforcast.home.view.MapsActivity
+import com.example.weatherforcast.model.FavoriteModel
 import com.example.weatherforcast.model.Repository
 import com.example.weatherforcast.network.WeatherService
 import com.example.weatherforcast.settings.SettingsActivity
+import com.google.android.gms.maps.model.LatLng
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.navigation.NavigationView
 
-class FavoriteActivity : AppCompatActivity() {
+class FavoriteActivity : AppCompatActivity(), OnClickListener {
     lateinit var toggle: ActionBarDrawerToggle
     lateinit var drawerLayout: DrawerLayout
     lateinit var navView: NavigationView
@@ -32,13 +35,17 @@ class FavoriteActivity : AppCompatActivity() {
     lateinit var favoriteRecyclerAdapter: FavoriteRecyclerAdapter
     lateinit var favoriteRecyclerView: RecyclerView
     lateinit var floatingActionButton: FloatingActionButton
+
     lateinit var outIntent: Intent
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_favorite)
 
-        var point = intent.extras?.get("point")
-         //---------send point to view model to insert in database-------//////
+
+        val actionBar: ActionBar = supportActionBar!!
+        val colorDrawable = ColorDrawable(Color.parseColor("#5B86E5"))
+        actionBar.setBackgroundDrawable(colorDrawable)
+
 
 
         drawerLayout = findViewById(R.id.drawerLayout)
@@ -84,9 +91,12 @@ class FavoriteActivity : AppCompatActivity() {
             outIntent = Intent(this, MapsActivity::class.java)
             outIntent.putExtra("source", "FAV")
             startActivity(outIntent)
+
+
+
         }
 
-        favoriteRecyclerAdapter = FavoriteRecyclerAdapter()
+        favoriteRecyclerAdapter = FavoriteRecyclerAdapter(this)
         favoriteRecyclerView.adapter = favoriteRecyclerAdapter
 
         favoriteViewModel = ViewModelProvider(
@@ -94,14 +104,28 @@ class FavoriteActivity : AppCompatActivity() {
                 Repository.getInstance(
                     WeatherService.getInstance(), ConcreteLocalSource(this), this
                 )
-            )
+            ,this)
         ).get(FavoriteViewModel::class.java)
 
-        favoriteViewModel.getAllFavorite().observe(this){
-            if (it != null){
+
+        if (intent.extras?.get("point") != null && intent.extras?.get("locality") != null){
+            var point: LatLng = intent.extras!!.get("point") as LatLng
+            var locality = intent.extras!!.get("locality") as String
+            favoriteViewModel.insertFavorite(
+                FavoriteModel(
+                    locality,
+                    point.latitude,
+                    point.longitude
+                )
+            )
+        }
+
+        favoriteViewModel.getAllFavorite().observe(this) {
+            if (it != null) {
                 favoriteRecyclerAdapter.setFavoriteList(it)
             }
         }
+
 
     }
 
@@ -110,5 +134,15 @@ class FavoriteActivity : AppCompatActivity() {
             return true
         }
         return super.onOptionsItemSelected(item)
+    }
+
+    override fun onDeleteClick(favoriteModel: FavoriteModel) {
+        favoriteViewModel.deleteFavorite(favoriteModel)
+        Toast.makeText(this, getString(R.string.toast_deleted), Toast.LENGTH_SHORT).show()
+    }
+
+    override fun onDisplayClick(favoriteModel: FavoriteModel) {
+        favoriteViewModel.displayFavorite(favoriteModel)
+       // finish()
     }
 }

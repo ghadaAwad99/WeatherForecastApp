@@ -9,7 +9,7 @@ import androidx.room.PrimaryKey
 data class WeatherModel(
     @PrimaryKey
     @ColumnInfo(name = "id")
-    val id:Int,
+    var id:Int,
     @ColumnInfo(name = "current")
     val current: Current,
     @ColumnInfo(name = "daily")
