@@ -5,13 +5,16 @@ import android.content.Intent
 import android.location.Address
 import android.location.Geocoder
 import android.util.Log
+import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
+import com.example.weatherforcast.model.WeatherModel
 import com.example.weatherforcast.settings.SettingsActivity
 import java.io.IOException
 import java.lang.StringBuilder
 import java.util.*
 
 object Utilities : AppCompatActivity() {
+    val ApiKey = "8bdc89e28e3ae5c674e20f1d16e70f7d"
     fun changeLanguage(lang:String, context: Context){
         val config = context.resources.configuration
 
@@ -46,5 +49,34 @@ object Utilities : AppCompatActivity() {
             Log.e("TAG", e.message.toString())
         }
         return result.toString()
+    }
+
+    fun chooseWeatherIcon(status:String, currentIcon:ImageView){
+        when (status) {
+            "Clouds" -> currentIcon.setImageResource(R.drawable.current_cloudy)
+            "Clear" -> currentIcon.setImageResource(R.drawable.current_sun)
+            "Thunderstorm" -> currentIcon.setImageResource(R.drawable.cloudy_storm)
+            "Drizzle" -> currentIcon.setImageResource(R.drawable.current_rain)
+            "Rain" -> currentIcon.setImageResource(R.drawable.current_rain)
+            "Snow" -> currentIcon.setImageResource(R.drawable.current_snow)
+            "Mist" -> currentIcon.setImageResource(R.drawable.current_fog)
+            "Smoke" -> currentIcon.setImageResource(R.drawable.current_fog)
+            "Haze" -> currentIcon.setImageResource(R.drawable.current_fog)
+            "Dust" -> currentIcon.setImageResource(R.drawable.current_fog)
+            "Fog" -> currentIcon.setImageResource(R.drawable.current_fog)
+            "Sand" -> currentIcon.setImageResource(R.drawable.current_fog)
+            "Ash" -> currentIcon.setImageResource(R.drawable.current_fog)
+            "Squall" -> currentIcon.setImageResource(R.drawable.current_squall)
+            "Tornado" -> currentIcon.setImageResource(R.drawable.ic_tornado)
+        }
+    }
+
+    fun convertToArabic(value: String): String {
+        return (value + "")
+            .replace("1".toRegex(), "١").replace("2".toRegex(), "٢")
+            .replace("3".toRegex(), "٣").replace("4".toRegex(), "٤")
+            .replace("5".toRegex(), "٥").replace("6".toRegex(), "٦")
+            .replace("7".toRegex(), "٧").replace("8".toRegex(), "٨")
+            .replace("9".toRegex(), "٩").replace("0".toRegex(), "٠")
     }
 }

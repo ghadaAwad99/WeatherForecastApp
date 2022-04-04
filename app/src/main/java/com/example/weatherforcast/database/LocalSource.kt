@@ -11,6 +11,6 @@ interface LocalSource {
     fun insertToFavorite(favoriteModel: FavoriteModel)
     fun deleteFromFavorite(favoriteModel: FavoriteModel)
 
-    val storedResponse: LiveData<List<WeatherModel>>
+    val storedResponse: LiveData<WeatherModel>
     fun insertLastResponse(weatherModel: WeatherModel)
 }

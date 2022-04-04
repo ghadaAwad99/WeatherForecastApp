@@ -5,11 +5,11 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.example.weatherforcast.model.RepositoryInterface
 
-class FavoriteViewModelFactory(private val _repo: RepositoryInterface, private val context: Context) :
+class FavoriteViewModelFactory(private val _repo: RepositoryInterface) :
     ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         return if (modelClass.isAssignableFrom(FavoriteViewModel::class.java)) {
-            FavoriteViewModel(_repo, context) as T
+            FavoriteViewModel(_repo) as T
         } else {
             throw IllegalArgumentException("ViewModel Class not found")
         }

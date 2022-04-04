@@ -1,4 +1,4 @@
-package com.example.weatherforcast.home.view
+package com.example.weatherforcast.favorite.view
 
 import android.content.SharedPreferences
 import android.view.LayoutInflater
@@ -6,31 +6,35 @@ import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
 import com.example.weatherforcast.R
+import com.example.weatherforcast.Utilities
 import com.example.weatherforcast.databinding.DayItemBinding
 import com.example.weatherforcast.model.Daily
 import java.text.SimpleDateFormat
 import java.util.*
 
-class HomeDaysRecyclerAdapter : RecyclerView.Adapter<DaysViewHolder>() {
+class FavoriteDaysAdapter : RecyclerView.Adapter<FavoriteDaysAdapter.FavDaysViewHolder>() {
     lateinit var sharedPreferences: SharedPreferences
 
     private var daysList = mutableListOf<Daily>()
 
-    fun setDaysList(daysList: List<Daily>) {
+    fun setFavDaysList(daysList: List<Daily>) {
         this.daysList = daysList.toMutableList()
         notifyDataSetChanged()
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): DaysViewHolder {
+    class FavDaysViewHolder(val binding: DayItemBinding) : RecyclerView.ViewHolder(binding.root)
 
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FavDaysViewHolder {
         val inflater = LayoutInflater.from(parent.context)
         val binding = DayItemBinding.inflate(inflater, parent, false)
-        return DaysViewHolder(binding)
+        return FavDaysViewHolder(binding)
     }
 
-    override fun onBindViewHolder(holder: DaysViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: FavDaysViewHolder, position: Int) {
         sharedPreferences = holder.binding.cardView.context.getSharedPreferences(
-            holder.binding.cardView.context.getString(R.string.shared_prefs),
+            holder.binding.cardView.context.getString(
+                R.string.shared_prefs
+            ),
             AppCompatActivity.MODE_PRIVATE
         )
         var lang = sharedPreferences.getString("LANGUAGE", "en")
@@ -39,10 +43,17 @@ class HomeDaysRecyclerAdapter : RecyclerView.Adapter<DaysViewHolder>() {
         val unix_seconds: Long = day.dt.toLong()
         val date = Date(unix_seconds * 1000L)
         val jdf = SimpleDateFormat("EEE")
-        jdf.timeZone = TimeZone.getTimeZone("GMT-4")
+        jdf.timeZone = TimeZone.getTimeZone("GMT+2")
         var java_date = jdf.format(date).trimIndent()
 
-        if (lang.equals("ar")) {
+        /*  if(lang.equals("en")){
+               when(position){
+                   0->java_date="Today"}
+
+           }else*/ if (lang.equals("ar")) {
+            /*   when(position){
+                   0->java_date="اليوم"
+                   1-> java_date = "غدا"}*/
             when (java_date) {
                 "Sun" -> java_date = "الأحد"
                 "Mon" -> java_date = "الإثنين"
@@ -53,12 +64,15 @@ class HomeDaysRecyclerAdapter : RecyclerView.Adapter<DaysViewHolder>() {
                 "Sat" -> java_date = "السبت"
             }
         }
+        // }
         holder.binding.dayName.text = java_date
-        holder.binding.dayTempMax.text = day.temp.max.toString() + " k"
-        holder.binding.dayTempMin.text = day.temp.min.toString() + " k"
+        holder.binding.dayTempMax.text = day.temp.max.toString()
+        holder.binding.dayTempMin.text = day.temp.min.toString()
         holder.binding.dayState.text = day.weather[0].description/*day.weather[0].main*/
 
-        when (day.weather[0].main) {
+
+        //chooseWeatherIcon(day.weather[0].main, holder.binding.dayWeatherIcon)
+       when (day.weather[0].main) {
             "Clouds" -> holder.binding.dayWeatherIcon.setImageResource(R.drawable.cloudy)
             "Clear" -> holder.binding.dayWeatherIcon.setImageResource(R.drawable.sun)
             "Thunderstorm" -> holder.binding.dayWeatherIcon.setImageResource(R.drawable.thunderstorm)
@@ -75,13 +89,7 @@ class HomeDaysRecyclerAdapter : RecyclerView.Adapter<DaysViewHolder>() {
             "Squall" -> holder.binding.dayWeatherIcon.setImageResource(R.drawable.squall)
             "Tornado" -> holder.binding.dayWeatherIcon.setImageResource(R.drawable.ic_tornado)
         }
-        /* holder.binding.dayName.text = day.dayName
-         holder.binding.dayState.text = day.dayState
-         holder.binding.dayTemp.text = day.dayTemp
-         Glide.with(holder.itemView.context).load(day.dayIcon).into(holder.binding.dayWeatherIcon)*/
     }
 
     override fun getItemCount() = daysList.size
 }
-
-class DaysViewHolder(val binding: DayItemBinding) : RecyclerView.ViewHolder(binding.root)

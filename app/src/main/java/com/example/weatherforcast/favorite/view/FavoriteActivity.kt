@@ -28,6 +28,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.navigation.NavigationView
 
 class FavoriteActivity : AppCompatActivity(), OnClickListener {
+
     lateinit var toggle: ActionBarDrawerToggle
     lateinit var drawerLayout: DrawerLayout
     lateinit var navView: NavigationView
@@ -35,22 +36,19 @@ class FavoriteActivity : AppCompatActivity(), OnClickListener {
     lateinit var favoriteRecyclerAdapter: FavoriteRecyclerAdapter
     lateinit var favoriteRecyclerView: RecyclerView
     lateinit var floatingActionButton: FloatingActionButton
-
     lateinit var outIntent: Intent
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_favorite)
-
-
+        this.title = "Favorite Locations"
         val actionBar: ActionBar = supportActionBar!!
         val colorDrawable = ColorDrawable(Color.parseColor("#5B86E5"))
         actionBar.setBackgroundDrawable(colorDrawable)
 
-
-
         drawerLayout = findViewById(R.id.drawerLayout)
         navView = findViewById(R.id.nav_view)
-        favoriteRecyclerView = findViewById(R.id.favorite_recyclerView)
+        favoriteRecyclerView = findViewById(R.id.days_recyclerView)
         floatingActionButton = findViewById(R.id.add_fab)
 
         toggle = ActionBarDrawerToggle(this, drawerLayout, R.string.open, R.string.close)
@@ -60,28 +58,16 @@ class FavoriteActivity : AppCompatActivity(), OnClickListener {
         navView.setNavigationItemSelectedListener {
             when (it.itemId) {
                 R.id.nav_home -> startActivity(
-                    Intent(
-                        this@FavoriteActivity,
-                        HomeScreen::class.java
-                    )
+                    Intent(this@FavoriteActivity, HomeScreen::class.java)
                 )
                 R.id.nav_settings -> startActivity(
-                    Intent(
-                        this@FavoriteActivity,
-                        SettingsActivity::class.java
-                    )
+                    Intent(this@FavoriteActivity, SettingsActivity::class.java)
                 )
                 R.id.nav_favorite -> startActivity(
-                    Intent(
-                        this@FavoriteActivity,
-                        FavoriteActivity::class.java
-                    )
+                    Intent(this@FavoriteActivity, FavoriteActivity::class.java)
                 )
                 R.id.nav_alerts -> startActivity(
-                    Intent(
-                        this@FavoriteActivity,
-                        AlertsActivity::class.java
-                    )
+                    Intent(this@FavoriteActivity, AlertsActivity::class.java)
                 )
             }
             true
@@ -91,20 +77,17 @@ class FavoriteActivity : AppCompatActivity(), OnClickListener {
             outIntent = Intent(this, MapsActivity::class.java)
             outIntent.putExtra("source", "FAV")
             startActivity(outIntent)
-
-
-
         }
 
         favoriteRecyclerAdapter = FavoriteRecyclerAdapter(this)
         favoriteRecyclerView.adapter = favoriteRecyclerAdapter
 
         favoriteViewModel = ViewModelProvider(
-            this, FavoriteViewModelFactory(
+            this, factory = FavoriteViewModelFactory(
                 Repository.getInstance(
                     WeatherService.getInstance(), ConcreteLocalSource(this), this
                 )
-            ,this)
+            )
         ).get(FavoriteViewModel::class.java)
 
 
@@ -112,20 +95,13 @@ class FavoriteActivity : AppCompatActivity(), OnClickListener {
             var point: LatLng = intent.extras!!.get("point") as LatLng
             var locality = intent.extras!!.get("locality") as String
             favoriteViewModel.insertFavorite(
-                FavoriteModel(
-                    locality,
-                    point.latitude,
-                    point.longitude
-                )
+                FavoriteModel(locality, point.latitude, point.longitude)
             )
         }
 
         favoriteViewModel.getAllFavorite().observe(this) {
-            if (it != null) {
-                favoriteRecyclerAdapter.setFavoriteList(it)
-            }
+            if (it != null) favoriteRecyclerAdapter.setFavoriteList(it)
         }
-
 
     }
 
@@ -142,7 +118,9 @@ class FavoriteActivity : AppCompatActivity(), OnClickListener {
     }
 
     override fun onDisplayClick(favoriteModel: FavoriteModel) {
-        favoriteViewModel.displayFavorite(favoriteModel)
-       // finish()
+        var favIntent = Intent(this, FavoriteItemDetails::class.java)
+        favIntent.putExtra("favorite model", favoriteModel)
+        //Toast.makeText(this, "you clicked " + favoriteModel.lat + favoriteModel.lon, Toast.LENGTH_SHORT).show()
+        startActivity(favIntent)
     }
 }

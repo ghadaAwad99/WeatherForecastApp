@@ -1,13 +1,13 @@
 package com.example.weatherforcast.home.viewModel
 
 import android.util.Log
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.weatherforcast.model.FavoriteModel
 import com.example.weatherforcast.model.RepositoryInterface
 import com.example.weatherforcast.model.WeatherModel
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -16,7 +16,8 @@ import java.net.SocketTimeoutException
 class HomeViewModel(var repository: RepositoryInterface): ViewModel() {
    //val daysList = MutableLiveData<List<Day>>()
 
-   val weatherMutableLiveData : MutableLiveData<WeatherModel> = MutableLiveData()
+   private val weatherMutableLiveData : MutableLiveData<WeatherModel> = MutableLiveData()
+    val weatherLiveData: LiveData<WeatherModel> = weatherMutableLiveData
 
 
 
@@ -24,8 +25,8 @@ class HomeViewModel(var repository: RepositoryInterface): ViewModel() {
    fun getCurrTemp(lat : Double,
                   lon : Double,
                    key : String,
-                   language : String = "",
-                   unit : Double = 0.0,){
+                   language : String,
+                   unit : String,){
        Log.i("TAG", "inside getCurrTemp")
       viewModelScope.launch(Dispatchers.IO) {
           Log.i("TAG", "inside CoroutineScope")
@@ -37,7 +38,7 @@ class HomeViewModel(var repository: RepositoryInterface): ViewModel() {
                   Log.i("TAG", "inside withContext")
                   if (response.isSuccessful) {
                       Log.i("TAG", "inside is successful")
-                      weatherMutableLiveData.value = response.body()
+                      weatherMutableLiveData.postValue(response.body())
                       Log.d("HomeViewModel", "weatherMutableLiveData " + weatherMutableLiveData.value?.daily)
                   } else {
                       Log.e("HomeViewModel", "Error fetching data in HomeViewModel " + response.message())
@@ -56,6 +57,9 @@ class HomeViewModel(var repository: RepositoryInterface): ViewModel() {
         viewModelScope.launch(Dispatchers.IO) {
             repository.insertLastResponse(weatherModel)
         }
+    }
+    fun getLastResponseFromRoom(): LiveData<WeatherModel> {
+        return repository.storedResponse
     }
 
 }

@@ -2,6 +2,7 @@ package com.example.weatherforcast.home.view
 
 import android.Manifest
 import android.annotation.SuppressLint
+import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
@@ -9,6 +10,8 @@ import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.location.Location
 import android.location.LocationManager
+import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
 import android.os.Bundle
 import android.os.Looper
 import android.provider.Settings
@@ -32,6 +35,7 @@ import com.example.weatherforcast.favorite.view.FavoriteActivity
 import com.example.weatherforcast.home.viewModel.HomeViewModel
 import com.example.weatherforcast.home.viewModel.HomeViewModelFactory
 import com.example.weatherforcast.model.Repository
+import com.example.weatherforcast.model.WeatherModel
 import com.example.weatherforcast.network.WeatherService
 import com.example.weatherforcast.settings.SettingsActivity
 import com.google.android.gms.location.*
@@ -42,39 +46,36 @@ import java.util.*
 
 
 class HomeScreen : AppCompatActivity() {
-    lateinit var homeDaysRecyclerAdapter: HomeDaysRecyclerAdapter
-    lateinit var homeHoursRecyclerAdapter: HomeHoursRecyclerAdapter
-    lateinit var recyclerView: RecyclerView
-    lateinit var hoursRecyclerView: RecyclerView
+
+    private lateinit var homeDaysRecyclerAdapter: HomeDaysRecyclerAdapter
+    private lateinit var homeHoursRecyclerAdapter: HomeHoursRecyclerAdapter
+    private lateinit var recyclerView: RecyclerView
+    private lateinit var hoursRecyclerView: RecyclerView
     lateinit var viewModel: HomeViewModel
-    lateinit var cityName: TextView
-    lateinit var dateText: TextView
-    lateinit var currentTempText: TextView
-    lateinit var currentIcon: ImageView
-    lateinit var currentMain: TextView
+    private lateinit var cityName: TextView
+    private lateinit var dateText: TextView
+    private lateinit var currentTempText: TextView
+    private lateinit var currentIcon: ImageView
+    private lateinit var currentMain: TextView
     lateinit var currentAdders: String
-    lateinit var sharedPreferences: SharedPreferences
+    private lateinit var sharedPreferences: SharedPreferences
     lateinit var lang: String
     lateinit var temp: String
-    lateinit var choosenLocation: String
-
+    private lateinit var choosenLocation: String
     var lat: Double = 0.0
     var lon: Double = 0.0
-    lateinit var toggle: ActionBarDrawerToggle
+    private lateinit var toggle: ActionBarDrawerToggle
     private lateinit var fusedLocationClient: FusedLocationProviderClient
 
     override fun onCreate(savedInstanceState: Bundle?) {
         Log.i("TAG", "Inside home screen activity")
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_home_screen)
-        //replaceFragment(HomeFragment())
 
         sharedPreferences = getSharedPreferences(getString(R.string.shared_prefs), MODE_PRIVATE)
         lang = sharedPreferences.getString("LANGUAGE", "en").toString()
         temp = sharedPreferences.getString("TEMP", "").toString()
-        choosenLocation =
-            sharedPreferences.getString("LOCATION", getString(R.string.gps)).toString()
-
+        choosenLocation = sharedPreferences.getString("LOCATION", getString(R.string.gps)).toString()
 
         val actionBar: ActionBar = supportActionBar!!
         val colorDrawable = ColorDrawable(Color.parseColor("#5B86E5"))
@@ -82,7 +83,7 @@ class HomeScreen : AppCompatActivity() {
 
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
 
-        recyclerView = findViewById(R.id.favorite_recyclerView)
+        recyclerView = findViewById(R.id.days_recyclerView)
         hoursRecyclerView = findViewById(R.id.hours_recyclerView)
         cityName = findViewById(R.id.city_name)
         dateText = findViewById(R.id.date_text)
@@ -95,104 +96,42 @@ class HomeScreen : AppCompatActivity() {
         recyclerView.adapter = homeDaysRecyclerAdapter
         hoursRecyclerView.adapter = homeHoursRecyclerAdapter
         viewModel = ViewModelProvider(
-            this, HomeViewModelFactory(
+            this, factory = HomeViewModelFactory(
                 Repository.getInstance(
                     WeatherService.getInstance(), ConcreteLocalSource(this), this
                 )
             )
-        ).get(
-            HomeViewModel::class.java
-        )
+        ).get(HomeViewModel::class.java)
 
-        if (intent.extras?.get("FAV LAT") != null && intent.extras?.get("FAV LON") != null) {
-            lat = (intent.extras?.get("FAV LAT") as Double)
-            lon = (intent.extras?.get("FAV LON") as Double)
-            lang = (intent.extras?.get("FAV LANG") as String)
-            currentAdders = (intent.extras?.get("FAV LOCALITY") as String)
-            viewModel.getCurrTemp(
-                lat,
-                lon,
-                "8bdc89e28e3ae5c674e20f1d16e70f7d",
-                lang
-            )
-        } else {
+
+
+        if (!isOnline(this)) {
+
+            Toast.makeText(this, "you are offline", Toast.LENGTH_SHORT).show()
+            viewModel.getLastResponseFromRoom().observe(this, {
+                if (it != null) {
+                    initHomeUi(it)
+                }
+            }
+                )
+        }else {
             if (choosenLocation == getString(R.string.gps)) {
                 getLastLocation()
             } else if (choosenLocation == getString(R.string.map)) {
-                var point: LatLng = intent.extras?.get("point") as LatLng
-                Toast.makeText(
-                    this,
-                    "map is choosen and lat is " + point.latitude + "and lon is " + point.longitude,
-                    Toast.LENGTH_SHORT
-                ).show()
+                val point: LatLng = intent.extras?.get("point") as LatLng
+                Toast.makeText(this, "map is chosen and lat is " + point.latitude + "and lon is " + point.longitude,
+                    Toast.LENGTH_SHORT).show()
                 currentAdders = intent.extras?.get("locality") as String
-                viewModel.getCurrTemp(
-                    point.latitude,
-                    point.longitude,
-                    "8bdc89e28e3ae5c674e20f1d16e70f7d",
-                    lang
-                )
+                viewModel.getCurrTemp(point.latitude, point.longitude, Utilities.ApiKey, lang, "metric")
             }
-        }
 
-        viewModel.weatherMutableLiveData.observe(this, {
-            it.id = 0
-            if (intent.extras?.get("FAV LAT") == null && intent.extras?.get("FAV LON") == null)
+            viewModel.weatherLiveData.observe(this, {
+                it.id = 0
                 viewModel.insertLastResponse(it)
-
-            Log.d("TAG", "onCreate: ${it.daily}")
-
-            homeDaysRecyclerAdapter.setDaysList(it.daily)
-            homeHoursRecyclerAdapter.setHoursList(it.hourly)
-            cityName.text = currentAdders/*it.timezone*/
-            currentMain.text = it.current.weather[0].description
-
-            //Unix seconds
-            val unix_seconds: Long = it.current.dt.toLong()
-            //convert seconds to milliseconds
-            val date = Date(unix_seconds * 1000L)
-            // format of the date
-            lateinit var jdf: SimpleDateFormat
-            lateinit var temp: String
-            lateinit var unit: String
-            if (lang == "en") {
-                jdf = SimpleDateFormat("EEE, d MMM")
-                temp = it.current.temp.toString()
-                unit = " k"
-
-            } else if (lang == "ar") {
-                jdf = SimpleDateFormat("EEE, d MMM", Locale("ar"))
-                temp = convertToArabic(it.current.temp.toString())
-                unit = " ك"
-            }
-            jdf.timeZone = TimeZone.getTimeZone("GMT+2")
-            val java_date = jdf.format(date).trimIndent()
-            /*  var num = convertToArabic(java_date)
-              Toast.makeText(this, "num is " + num , Toast.LENGTH_SHORT).show()*/
-            dateText.text = java_date
-
-
-            currentTempText.text = temp + unit
-
-            when (it.current.weather[0].main) {
-                "Clouds" -> currentIcon.setImageResource(R.drawable.current_cloudy)
-                "Clear" -> currentIcon.setImageResource(R.drawable.current_sun)
-                "Thunderstorm" -> currentIcon.setImageResource(R.drawable.cloudy_storm)
-                "Drizzle" -> currentIcon.setImageResource(R.drawable.current_rain)
-                "Rain" -> currentIcon.setImageResource(R.drawable.current_rain)
-                "Snow" -> currentIcon.setImageResource(R.drawable.current_snow)
-                "Mist" -> currentIcon.setImageResource(R.drawable.current_fog)
-                "Smoke" -> currentIcon.setImageResource(R.drawable.current_fog)
-                "Haze" -> currentIcon.setImageResource(R.drawable.current_fog)
-                "Dust" -> currentIcon.setImageResource(R.drawable.current_fog)
-                "Fog" -> currentIcon.setImageResource(R.drawable.current_fog)
-                "Sand" -> currentIcon.setImageResource(R.drawable.current_fog)
-                "Ash" -> currentIcon.setImageResource(R.drawable.current_fog)
-                "Squall" -> currentIcon.setImageResource(R.drawable.current_squall)
-                "Tornado" -> currentIcon.setImageResource(R.drawable.ic_tornado)
-            }
-        })
-
+                Log.d("TAG", "onCreate: ${it.daily}")
+                initHomeUi(it)
+            })
+        }
 
         val drawerLayout: DrawerLayout = findViewById(R.id.drawerLayout)
         val navView: NavigationView = findViewById(R.id.nav_view)
@@ -205,30 +144,12 @@ class HomeScreen : AppCompatActivity() {
         navView.setNavigationItemSelectedListener {
             when (it.itemId) {
                 R.id.nav_home -> startActivity(Intent(this@HomeScreen, HomeScreen::class.java))
-                R.id.nav_settings -> startActivity(
-                    Intent(
-                        this@HomeScreen,
-                        SettingsActivity::class.java
-                    )
-                )
-                R.id.nav_favorite -> startActivity(
-                    Intent(
-                        this@HomeScreen,
-                        FavoriteActivity::class.java
-                    )
-                )
-                R.id.nav_alerts -> startActivity(
-                    Intent(
-                        this@HomeScreen,
-                        AlertsActivity::class.java
-                    )
-                )
-
+                R.id.nav_settings -> startActivity(Intent(this@HomeScreen, SettingsActivity::class.java))
+                R.id.nav_favorite -> startActivity(Intent(this@HomeScreen, FavoriteActivity::class.java))
+                R.id.nav_alerts -> startActivity(Intent(this@HomeScreen, AlertsActivity::class.java))
             }
             true
         }
-
-
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -238,18 +159,9 @@ class HomeScreen : AppCompatActivity() {
         return super.onOptionsItemSelected(item)
     }
 
-/*    fun replaceFragment(fragment: Fragment) {
-        val fragmentManager = supportFragmentManager
-        val fragmentTransaction = fragmentManager.beginTransaction()
-        fragment.arguments = bundle
-        fragmentTransaction.replace(R.id.frame, fragment)
-        fragmentTransaction.commit()
-    }*/
 
-
-    //----
     private fun getLastLocation() {
-        Log.i("TAG", "insode getLastLocation ")
+        Log.i("TAG", "inside getLastLocation ")
         if (checkPermission()) {
             Log.i("TAG", "inside ifff ")
             if (isLocationEnabled()) {
@@ -260,52 +172,17 @@ class HomeScreen : AppCompatActivity() {
                         if (location == null) {
                             requestNewLocationData()
                         } else {
-
-                            /* lat = -64.6240
-                             lon = -70.1251*/
                             lat = location.latitude
                             lon = location.longitude
                             currentAdders = Utilities.getAddress(lat, lon, lang, this)
-                            /* bundle.putDouble("long",lon)
-                             bundle.putDouble("lat", lat)*/
                             Log.i("TAG", "before getCurrTemp")
-                            viewModel.getCurrTemp(
-                                lat = lat,
-                                lon = lon,
-                                key = "8bdc89e28e3ae5c674e20f1d16e70f7d",
-                                language = lang
-                            )
+                            viewModel.getCurrTemp(lat, lon,Utilities.ApiKey, lang,"metric")
 
-                            Log.i(
-                                "TAG",
-                                "getLastLocation lat is " + lat + "lon is " + lon + " and lang is " + lang.toString()
-                            )
+                            Log.i("TAG", "getLastLocation lat is " + lat + "lon is " + lon + " and lang is " + lang)
                         }
                     }
-                /*   fusedLocationProviderClient?.getLastLocation()
-                       ?.addOnCompleteListener(object : OnCompleteListener<Location> {
-                           override fun onComplete(task: Task<Location>) {
-                               val location: Location = task.getResult()
-                               if (location == null) {
-                                   requestNewLocationData()
-                               } else {
-                                   lat = location.latitude
-                                   lon = location.longitude
-                                   *//* bundle.putDouble("long",lon)
-                                 bundle.putDouble("lat", lat)*//*
-                                Log.i("TAG", "before getCurrTemp")
-                                viewModel.getCurrTemp(lat, lon, "8bdc89e28e3ae5c674e20f1d16e70f7d")
-
-                                Log.i("TAG", "getLastLocation lat is " + lat + "lon is " + lon)
-                            }
-                        }
-                    })*/
             } else {
-                Toast.makeText(
-                    this@HomeScreen,
-                    "Please turn on your location",
-                    Toast.LENGTH_SHORT
-                ).show()
+                Toast.makeText(this@HomeScreen, "Please turn on your location", Toast.LENGTH_SHORT).show()
                 val intent = Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)
                 startActivity(intent)
             }
@@ -342,46 +219,98 @@ class HomeScreen : AppCompatActivity() {
     private fun requestNewLocationData() {
         val locationRequest: LocationRequest = LocationRequest.create()
         locationRequest.interval = 10000
-        locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
-        locationRequest.setFastestInterval(5000)
-        locationRequest.setNumUpdates(1)
+        locationRequest.priority = LocationRequest.PRIORITY_HIGH_ACCURACY
+        locationRequest.fastestInterval = 5000
+        locationRequest.numUpdates = 1
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
         fusedLocationClient.requestLocationUpdates(
             locationRequest, locationCallback,
             Looper.myLooper()!!
         )
-        /*  Looper.myLooper()?.let {
-              fusedLocationProviderClient!!.requestLocationUpdates(
-                  locationRequest,
-                  locationCallback,
-                  it
-              )
-          }*/
     }
 
     private val locationCallback: LocationCallback = object : LocationCallback() {
         override fun onLocationResult(locationResult: LocationResult) {
             super.onLocationResult(locationResult)
-            val lastLocation: Location = locationResult.getLastLocation()
+            val lastLocation: Location = locationResult.lastLocation
             lat = lastLocation.latitude
             lon = lastLocation.longitude
 
-
-            /*  lat = -64.6240
-              lon = -70.1251*/
-
             currentAdders = Utilities.getAddress(lat, lon, lang, this@HomeScreen)
-            viewModel.getCurrTemp(lat, lon, "8bdc89e28e3ae5c674e20f1d16e70f7d", lang)
+            viewModel.getCurrTemp(lat, lon, Utilities.ApiKey, lang, "metric")
 
-            /* bundle.putDouble("long",lon)
-             bundle.putDouble("lat", lat)*/
-
-            Log.i(
-                "TAG",
-                "onLocationResult lat is " + lat + "lon is " + lon + " and lang is " + lang.toString()
-            )
+            Log.i("TAG", "onLocationResult lat is " + lat + "lon is " + lon + " and lang is " + lang)
         }
     }
+
+    fun isOnline(context: Context): Boolean {
+        val connectivityManager =
+            context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        if (connectivityManager != null) {
+            val capabilities =
+                connectivityManager.getNetworkCapabilities(connectivityManager.activeNetwork)
+            if (capabilities != null) {
+                if (capabilities.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR)) {
+                    Log.i("Internet", "NetworkCapabilities.TRANSPORT_CELLULAR")
+                    return true
+                } else if (capabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI)) {
+                    Log.i("Internet", "NetworkCapabilities.TRANSPORT_WIFI")
+                    return true
+                } else if (capabilities.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET)) {
+                    Log.i("Internet", "NetworkCapabilities.TRANSPORT_ETHERNET")
+                    return true
+                }
+            }
+        }
+        return false
+    }
+
+        fun initHomeUi(it:WeatherModel){
+            homeDaysRecyclerAdapter.setDaysList(it.daily)
+            homeHoursRecyclerAdapter.setHoursList(it.hourly)
+
+            currentAdders = Utilities.getAddress(it.lat, it.lon, lang, this)
+            cityName.text = currentAdders
+            currentMain.text = it.current.weather[0].description
+            val unix_seconds: Long = it.current.dt.toLong()
+            val date = Date(unix_seconds * 1000L)
+            lateinit var jdf: SimpleDateFormat
+            lateinit var temp: String
+            lateinit var unit: String
+            if (lang == "en") {
+                jdf = SimpleDateFormat("EEE, d MMM")
+                temp = it.current.temp.toString()
+                unit = " º"
+
+            } else if (lang == "ar") {
+                jdf = SimpleDateFormat("EEE, d MMM", Locale("ar"))
+                temp = Utilities.convertToArabic(it.current.temp.toString())
+                unit = " º"
+            }
+            jdf.timeZone = TimeZone.getTimeZone("GMT+2")
+            val java_date = jdf.format(date).trimIndent()
+            dateText.text = java_date
+            currentTempText.text = temp + unit
+
+            when (it.current.weather[0].main) {
+                "Clouds" -> currentIcon.setImageResource(R.drawable.current_cloudy)
+                "Clear" -> currentIcon.setImageResource(R.drawable.current_sun)
+                "Thunderstorm" -> currentIcon.setImageResource(R.drawable.cloudy_storm)
+                "Drizzle" -> currentIcon.setImageResource(R.drawable.current_rain)
+                "Rain" -> currentIcon.setImageResource(R.drawable.current_rain)
+                "Snow" -> currentIcon.setImageResource(R.drawable.current_snow)
+                "Mist" -> currentIcon.setImageResource(R.drawable.current_fog)
+                "Smoke" -> currentIcon.setImageResource(R.drawable.current_fog)
+                "Haze" -> currentIcon.setImageResource(R.drawable.current_fog)
+                "Dust" -> currentIcon.setImageResource(R.drawable.current_fog)
+                "Fog" -> currentIcon.setImageResource(R.drawable.current_fog)
+                "Sand" -> currentIcon.setImageResource(R.drawable.current_fog)
+                "Ash" -> currentIcon.setImageResource(R.drawable.current_fog)
+                "Squall" -> currentIcon.setImageResource(R.drawable.current_squall)
+                "Tornado" -> currentIcon.setImageResource(R.drawable.ic_tornado)
+            }
+        }
+        }
 
     fun convertToArabic(value: String): String {
         return (value + "")
@@ -413,4 +342,26 @@ class HomeScreen : AppCompatActivity() {
         }
         return result
     }*/
-}
+
+
+/*if (intent.extras?.get("FAV LAT") != null && intent.extras?.get("FAV LON") != null) {
+          lat = (intent.extras?.get("FAV LAT") as Double)
+          lon = (intent.extras?.get("FAV LON") as Double)
+          lang = (intent.extras?.get("FAV LANG") as String)
+          currentAdders = (intent.extras?.get("FAV LOCALITY") as String)
+          viewModel.getCurrTemp(
+              lat,
+              lon,
+              "8bdc89e28e3ae5c674e20f1d16e70f7d",
+              lang,
+              "metric"
+          )
+      } else {*/
+
+/*    fun replaceFragment(fragment: Fragment) {
+        val fragmentManager = supportFragmentManager
+        val fragmentTransaction = fragmentManager.beginTransaction()
+        fragment.arguments = bundle
+        fragmentTransaction.replace(R.id.frame, fragment)
+        fragmentTransaction.commit()
+    }*/

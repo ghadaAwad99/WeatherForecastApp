@@ -5,7 +5,6 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import com.example.weatherforcast.database.LocalSource
 import com.example.weatherforcast.network.WeatherInterface
-import com.example.weatherforcast.network.WeatherService
 
 class Repository private constructor(
     private val weatherInterface: WeatherInterface,
@@ -18,7 +17,7 @@ class Repository private constructor(
         lon: Double,
         key: String,
         language: String,
-        unit: Double
+        unit: String
     ) = weatherInterface.getCurrentTemp(lat, lon, key, language, unit)
 
 
@@ -30,12 +29,11 @@ class Repository private constructor(
             Log.i("TAG", "inside repo get instance")
             return instance ?: Repository(
                 weatherInterface, localSource, context
-                /*WeatherService.getInstance(),*/
             )
         }
     }
 
-    override val storedResponse: LiveData<List<WeatherModel>> = localSource.storedResponse
+    override val storedResponse: LiveData<WeatherModel> = localSource.storedResponse
 
     override val allStoredFavorites: LiveData<List<FavoriteModel>> = localSource.allStoredFavorites
 

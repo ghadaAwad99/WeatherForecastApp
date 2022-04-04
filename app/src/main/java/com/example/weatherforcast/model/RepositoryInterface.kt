@@ -4,13 +4,14 @@ import androidx.lifecycle.LiveData
 import retrofit2.Response
 
 interface RepositoryInterface {
-    suspend fun getCurrentWeather(lat : Double,
-                                  lon : Double,
-                                  key : String,
-                                  language : String = "",
-                                  unit : Double = 0.0,) : Response<WeatherModel>
+    suspend fun getCurrentWeather(
+        lat: Double,
+        lon: Double,
+        key: String,
+        language: String,
+        unit: String ) : Response<WeatherModel>
 
-    val storedResponse: LiveData<List<WeatherModel>>
+    val storedResponse: LiveData<WeatherModel>
 
     val allStoredFavorites: LiveData<List<FavoriteModel>>
 

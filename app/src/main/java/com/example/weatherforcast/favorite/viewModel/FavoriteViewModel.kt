@@ -1,22 +1,42 @@
 package com.example.weatherforcast.favorite.viewModel
 
-import android.content.Context
-import android.content.Intent
 import android.content.SharedPreferences
-import androidx.appcompat.app.AppCompatActivity
+import android.util.Log
+import android.widget.Toast
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.weatherforcast.R
-import com.example.weatherforcast.home.view.HomeScreen
 import com.example.weatherforcast.model.FavoriteModel
 import com.example.weatherforcast.model.RepositoryInterface
+import com.example.weatherforcast.model.WeatherModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import java.net.SocketTimeoutException
 
-class FavoriteViewModel(private val repository: RepositoryInterface, private val context: Context) : ViewModel() {
-    lateinit var sharedPreferences : SharedPreferences
-    lateinit var lang:String
+class FavoriteViewModel(private val repository: RepositoryInterface) : ViewModel() {
+
+    private val weatherMutableLiveData : MutableLiveData<WeatherModel> = MutableLiveData()
+    val weatherLiveData:LiveData<WeatherModel> = weatherMutableLiveData
+
+    fun getCurrTemp(lat: Double, lon: Double, key: String, language: String, unit: String){
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                val response = repository.getCurrentWeather(lat, lon, key, language, unit)
+                withContext(Dispatchers.Main) {
+                    if (response.isSuccessful) {
+                        weatherMutableLiveData.value = response.body()
+                        Log.d("FavoriteViewModel", "weatherMutableLiveData " + weatherMutableLiveData.value?.daily)
+                    } else {
+                        Log.e("FavoriteViewModel", "Error fetching data in FavoriteViewModel " + response.message())
+                    }
+                }
+            }catch (ex : SocketTimeoutException){
+                Log.e("TAG", ex.message.toString())
+            }
+        }
+    }
 
     fun deleteFavorite(favoriteModel: FavoriteModel) {
         viewModelScope.launch(Dispatchers.IO) {
@@ -34,21 +54,4 @@ class FavoriteViewModel(private val repository: RepositoryInterface, private val
         }
     }
 
-    fun displayFavorite(favoriteModel: FavoriteModel){
-        sharedPreferences = context.getSharedPreferences(context.getString(R.string.shared_prefs),
-            AppCompatActivity.MODE_PRIVATE
-        )
-        lang = sharedPreferences.getString("LANGUAGE", "en").toString()
-        var favIntent = Intent(context, HomeScreen::class.java)
-        favIntent.putExtra("FAV LAT", favoriteModel.lat)
-        favIntent.putExtra("FAV LON", favoriteModel.lon)
-        favIntent.putExtra("FAV LANG", lang)
-        favIntent.putExtra("FAV LOCALITY",favoriteModel.locality )
-        context.startActivity(favIntent)
-
-
-       /* viewModelScope.launch(Dispatchers.IO){
-            repository.getCurrentWeather(favoriteModel.lat, favoriteModel.lon, lang)
-        }*/
-    }
 }

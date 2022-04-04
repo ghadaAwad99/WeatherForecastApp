@@ -11,7 +11,7 @@ class ConcreteLocalSource(context: Context) : LocalSource {
     override val allStoredFavorites: LiveData<List<FavoriteModel>>
 
     private val weatherDAO: WeatherDAO?
-    override val storedResponse: LiveData<List<WeatherModel>>
+    override val storedResponse: LiveData<WeatherModel>
 
     init {
         val database: AppDatabase = AppDatabase.getInstance(context)

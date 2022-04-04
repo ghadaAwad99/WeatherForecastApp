@@ -14,5 +14,5 @@ interface WeatherDAO {
     fun insertLastResponse(weatherModel: WeatherModel)
 
     @Query("SELECT * FROM weatherResponse")
-    fun getLastResponse() : LiveData<List<WeatherModel>>
+    fun getLastResponse() : LiveData<WeatherModel>
 }
