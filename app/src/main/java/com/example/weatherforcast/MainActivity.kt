@@ -59,17 +59,21 @@ class MainActivity : AppCompatActivity() {
         locationRadioGroup.setOnCheckedChangeListener { group, checkedId ->
             locationRadioButton = findViewById<View>(checkedId) as RadioButton
             Toast.makeText(this, locationRadioButton.text, Toast.LENGTH_SHORT).show()
-            editor.putString("LOCATION", locationRadioButton.text.toString())
-            editor.apply()
+
 
             when(locationRadioButton.text.toString()){
                 getString(R.string.map) -> {
+                    editor.putString("LOCATION", "Map")
+                    editor.apply()
                     intent = Intent(this, MapsActivity::class.java)
                     intent.putExtra("source", "HOME")
                     startActivity(intent)
 
                 finish()}
-                getString(R.string.gps)->{ startActivity(Intent(this, HomeScreen::class.java))
+                getString(R.string.gps)->{
+                    editor.putString("LOCATION", "GPS")
+                    editor.apply()
+                    startActivity(Intent(this, HomeScreen::class.java))
                     finish()}
             }
 

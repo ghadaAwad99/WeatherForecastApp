@@ -15,8 +15,10 @@ import android.net.NetworkCapabilities
 import android.os.Bundle
 import android.os.Looper
 import android.provider.Settings
+import android.util.AttributeSet
 import android.util.Log
 import android.view.MenuItem
+import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
@@ -103,10 +105,7 @@ class HomeScreen : AppCompatActivity() {
             )
         ).get(HomeViewModel::class.java)
 
-
-
         if (!isOnline(this)) {
-
             Toast.makeText(this, "you are offline", Toast.LENGTH_SHORT).show()
             viewModel.getLastResponseFromRoom().observe(this, {
                 if (it != null) {
@@ -115,7 +114,9 @@ class HomeScreen : AppCompatActivity() {
             }
                 )
         }else {
-            if (choosenLocation == getString(R.string.gps)) {
+            Log.i("TAG", getString(R.string.gps))
+            if (choosenLocation == "GPS") {
+                Log.i("TAG", "inside choosenLocation == getString(R.string.gps)")
                 getLastLocation()
             } else if (choosenLocation == getString(R.string.map)) {
                 val point: LatLng = intent.extras?.get("point") as LatLng
@@ -151,6 +152,7 @@ class HomeScreen : AppCompatActivity() {
             true
         }
     }
+
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         if (toggle.onOptionsItemSelected(item)) {

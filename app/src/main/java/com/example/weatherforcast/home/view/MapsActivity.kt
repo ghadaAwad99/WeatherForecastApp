@@ -51,10 +51,6 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, /*GoogleMap.OnMark
     }
 
     private fun showDialog(title: String, point: LatLng) {
-
-
-
-
         Toast.makeText(
             this,
             "inside map activity and lat is " + point.latitude + " and lon is " + point.longitude,

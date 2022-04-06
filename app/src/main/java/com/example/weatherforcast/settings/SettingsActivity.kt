@@ -5,6 +5,7 @@ import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.view.MenuItem
 import android.view.View
 import android.widget.RadioButton
@@ -36,6 +37,7 @@ class SettingsActivity : AppCompatActivity() {
     private lateinit var windRadioButton: RadioButton
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        Log.i("TAG", "inside settings activity")
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_settings)
         this.title = "Settings"
@@ -59,8 +61,8 @@ class SettingsActivity : AppCompatActivity() {
             languageRadioButton = findViewById<View>(checkedId) as RadioButton
             Toast.makeText(this, languageRadioButton.text, Toast.LENGTH_SHORT).show()
             when(languageRadioButton.text){
-                "Arabic" -> lang = "ar"
-                "English"-> lang = "en"
+                getString(R.string.arabic) -> lang = "ar"
+                getString(R.string.english)-> lang = "en"
             }
             editor.putString("LANGUAGE", lang)
             editor.apply()
@@ -86,13 +88,20 @@ class SettingsActivity : AppCompatActivity() {
         locationRadioGroup.setOnCheckedChangeListener { group, checkedId ->
             locationRadioButton = findViewById<View>(checkedId) as RadioButton
             Toast.makeText(this, locationRadioButton.text, Toast.LENGTH_SHORT).show()
-            editor.putString("LOCATION", locationRadioButton.text.toString())
-            editor.apply()
+
             when(locationRadioButton.text.toString()){
 
-                getString(R.string.map) -> {startActivity(Intent(this, MapsActivity::class.java))
+                getString(R.string.map) -> {
+                    editor.putString("LOCATION", "Map")
+                    editor.apply()
+                    intent = Intent(this, MapsActivity::class.java)
+                    intent.putExtra("source", "HOME")
+                    startActivity(intent)
                     finish()}
-                getString(R.string.gps)->{ startActivity(Intent(this, HomeScreen::class.java))
+                getString(R.string.gps)->{
+                    editor.putString("LOCATION", "GPS")
+                    editor.apply()
+                    startActivity(Intent(this, HomeScreen::class.java))
                     finish()}
             }
         }
