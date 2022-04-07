@@ -25,9 +25,24 @@ android:id="@+id/drawerLayout"
       tools:layout_editor_absoluteX="69dp"
       tools:layout_editor_absoluteY="28dp">
 
+
    <androidx.constraintlayout.widget.ConstraintLayout
        android:layout_width="match_parent"
        android:layout_height="wrap_content">
+
+    <TextView
+        android:id="@+id/no_data_taxt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+android:visibility="gone"
+        android:layout_marginStart="1dp"
+        android:layout_marginEnd="240dp"
+        android:layout_marginBottom="1dp"
+        android:text="NO DATA NO CONNECTION"
+        app:layout_constraintBottom_toTopOf="@+id/temp_cardView"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/days_hours_CardView"
@@ -46,12 +61,11 @@ android:id="@+id/drawerLayout"
          android:id="@+id/hours_recyclerView"
          android:layout_width="match_parent"
          android:layout_height="match_parent"
-         tools:itemCount="24"
-         tools:listitem="@layout/hour_item"
+         android:background="@drawable/gradient"
          android:orientation="horizontal"
          app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-         android:background="@drawable/gradient"
-         />
+         tools:itemCount="24"
+         tools:listitem="@layout/hour_item" />
 
 
     </com.google.android.material.card.MaterialCardView>
@@ -65,19 +79,19 @@ android:id="@+id/drawerLayout"
         android:layout_marginEnd="15dp"
         android:layout_marginBottom="15dp"
         android:elevation="20dp"
-        app:cardCornerRadius="20dp"
         android:paddingBottom="15dp"
+        app:cardCornerRadius="20dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/days_hours_CardView">
+
      <androidx.recyclerview.widget.RecyclerView
          android:id="@+id/days_recyclerView"
          android:layout_width="match_parent"
          android:layout_height="match_parent"
-         tools:itemCount="7"
-         tools:listitem="@layout/day_item"
-         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
          android:background="@drawable/gradient"
-         />
+         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+         tools:itemCount="7"
+         tools:listitem="@layout/day_item" />
 
 
     </com.google.android.material.card.MaterialCardView>
@@ -112,11 +126,11 @@ android:id="@+id/drawerLayout"
           android:layout_height="wrap_content"
           android:layout_marginStart="30dp"
           android:layout_marginTop="25dp"
-          tools:text="72.0º"
           android:textColor="@color/white"
           android:textSize="50dp"
           app:layout_constraintStart_toStartOf="parent"
-          app:layout_constraintTop_toBottomOf="@+id/textView2" />
+          app:layout_constraintTop_toBottomOf="@+id/textView2"
+          tools:text="72.0º" />
 
       <ImageView
           android:id="@+id/current_weather_icon"
@@ -136,24 +150,24 @@ android:id="@+id/drawerLayout"
           android:layout_height="wrap_content"
           android:layout_marginTop="30dp"
           android:layout_marginEnd="30dp"
-          tools:text="Friday, 26 Feb"
           android:textColor="@color/white"
           app:layout_constraintEnd_toEndOf="parent"
-          app:layout_constraintTop_toTopOf="parent" />
+          app:layout_constraintTop_toTopOf="parent"
+          tools:text="Friday, 26 Feb" />
 
       <TextView
           android:id="@+id/city_name"
           android:layout_width="270dp"
           android:layout_height="wrap_content"
           android:layout_marginStart="6dp"
-          android:layout_marginBottom="30dp"
           android:layout_marginEnd="15dp"
-          tools:text="Alexandria"
+          android:layout_marginBottom="30dp"
           android:ellipsize="end"
           android:maxLines="1"
           android:textColor="@color/white"
           app:layout_constraintBottom_toBottomOf="parent"
-          app:layout_constraintStart_toEndOf="@+id/imageView" />
+          app:layout_constraintStart_toEndOf="@+id/imageView"
+          tools:text="Alexandria" />
 
       <TextView
           android:id="@+id/textView2"
@@ -185,11 +199,11 @@ android:id="@+id/drawerLayout"
           android:layout_height="wrap_content"
           android:layout_marginStart="30dp"
           android:layout_marginTop="5dp"
-          tools:text="Clear"
           android:textColor="@color/white"
           android:textSize="17sp"
           app:layout_constraintStart_toStartOf="parent"
-          app:layout_constraintTop_toBottomOf="@+id/current_temp_text" />
+          app:layout_constraintTop_toBottomOf="@+id/current_temp_text"
+          tools:text="Clear" />
      </androidx.constraintlayout.widget.ConstraintLayout>
 
     </androidx.cardview.widget.CardView>

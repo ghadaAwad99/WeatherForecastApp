@@ -12,6 +12,8 @@ import android.location.Location
 import android.location.LocationManager
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
+import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.os.Looper
 import android.provider.Settings
@@ -59,6 +61,7 @@ class HomeScreen : AppCompatActivity() {
     private lateinit var currentTempText: TextView
     private lateinit var currentIcon: ImageView
     private lateinit var currentMain: TextView
+    private lateinit var noDataText: TextView
     lateinit var currentAdders: String
     private lateinit var sharedPreferences: SharedPreferences
     lateinit var lang: String
@@ -92,9 +95,10 @@ class HomeScreen : AppCompatActivity() {
         currentIcon = findViewById(R.id.current_weather_icon)
         currentTempText = findViewById(R.id.current_temp_text)
         currentMain = findViewById(R.id.current_main)
+        noDataText = findViewById(R.id.no_data_taxt)
 
-        homeDaysRecyclerAdapter = HomeDaysRecyclerAdapter()
-        homeHoursRecyclerAdapter = HomeHoursRecyclerAdapter()
+        homeDaysRecyclerAdapter = HomeDaysRecyclerAdapter.getInstance()
+        homeHoursRecyclerAdapter = HomeHoursRecyclerAdapter.getInstance()
         recyclerView.adapter = homeDaysRecyclerAdapter
         hoursRecyclerView.adapter = homeHoursRecyclerAdapter
         viewModel = ViewModelProvider(
@@ -110,6 +114,8 @@ class HomeScreen : AppCompatActivity() {
             viewModel.getLastResponseFromRoom().observe(this, {
                 if (it != null) {
                     initHomeUi(it)
+                }else{
+                    noDataText.visibility = View.VISIBLE
                 }
             }
                 )
@@ -119,11 +125,22 @@ class HomeScreen : AppCompatActivity() {
                 Log.i("TAG", "inside choosenLocation == getString(R.string.gps)")
                 getLastLocation()
             } else if (choosenLocation == getString(R.string.map)) {
-                val point: LatLng = intent.extras?.get("point") as LatLng
-                Toast.makeText(this, "map is chosen and lat is " + point.latitude + "and lon is " + point.longitude,
-                    Toast.LENGTH_SHORT).show()
-                currentAdders = intent.extras?.get("locality") as String
-                viewModel.getCurrTemp(point.latitude, point.longitude, Utilities.ApiKey, lang, "metric")
+                if (intent.extras?.get("point") != null) {
+                    var point: LatLng = intent.extras?.get("point") as LatLng
+                    Toast.makeText(
+                        this,
+                        "map is chosen and lat is " + point.latitude + "and lon is " + point.longitude,
+                        Toast.LENGTH_SHORT
+                    ).show()
+                    currentAdders = intent.extras?.get("locality") as String
+                    viewModel.getCurrTemp(
+                        point.latitude,
+                        point.longitude,
+                        Utilities.ApiKey,
+                        lang,
+                        "metric"
+                    )
+                }
             }
 
             viewModel.weatherLiveData.observe(this, {
@@ -187,16 +204,65 @@ class HomeScreen : AppCompatActivity() {
                 Toast.makeText(this@HomeScreen, "Please turn on your location", Toast.LENGTH_SHORT).show()
                 val intent = Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)
                 startActivity(intent)
+
             }
         } else {
+            Log.i("TAG", "requestPermissions")
             ActivityCompat.requestPermissions(
                 this, arrayOf(
                     Manifest.permission.ACCESS_COARSE_LOCATION,
                     Manifest.permission.ACCESS_FINE_LOCATION
                 ), 0
             )
+          /*  onRequestPermissionsResult(0, arrayOf(
+                Manifest.permission.ACCESS_COARSE_LOCATION,
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ),PackageManager.PERMISSION_GRANTED)*/
 
         }
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int, permissions: Array<String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (requestCode == 0) {
+            when {
+              /*  grantResults.isEmpty() -> {
+                    // If user interaction was interrupted, the permission request is cancelled and you
+                    // receive empty arrays.
+                    Log.i("TAG", "User interaction was cancelled.")
+                }*/
+                grantResults[0] == PackageManager.PERMISSION_GRANTED -> {
+                    // Permission granted.
+                    getLastLocation()
+                }
+                else -> {
+                    showSnackbar("Permission was denied", "Settings",
+                        View.OnClickListener {
+                            // Build intent that displays the App settings screen.
+                            val intent = Intent()
+                            intent.action = Settings.ACTION_APPLICATION_DETAILS_SETTINGS
+                            val uri = Uri.fromParts(
+                                "package",
+                                Build.DISPLAY, null
+                            )
+                            intent.data = uri
+                            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                            startActivity(intent)
+                        }
+                    )
+                }
+            }
+        }
+    }
+
+    private fun showSnackbar(
+        mainTextStringId: String, actionStringId: String,
+        listener: View.OnClickListener
+    ) {
+        Toast.makeText(this, mainTextStringId, Toast.LENGTH_LONG).show()
     }
 
     private fun checkPermission(): Boolean {

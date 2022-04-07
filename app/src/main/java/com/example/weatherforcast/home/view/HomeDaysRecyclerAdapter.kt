@@ -1,17 +1,41 @@
 package com.example.weatherforcast.home.view
 
+import android.content.Context
 import android.content.SharedPreferences
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
+import androidx.room.Room
 import com.example.weatherforcast.R
+import com.example.weatherforcast.database.AppDatabase
 import com.example.weatherforcast.databinding.DayItemBinding
 import com.example.weatherforcast.model.Daily
 import java.text.SimpleDateFormat
 import java.util.*
 
 class HomeDaysRecyclerAdapter : RecyclerView.Adapter<DaysViewHolder>() {
+
+    companion object{
+        private var instance = HomeDaysRecyclerAdapter()
+        fun getInstance():HomeDaysRecyclerAdapter{
+            if (instance == null){
+                instance = HomeDaysRecyclerAdapter()
+            }
+            return instance
+        }
+    }
+/*    companion object{
+        private var instance : AppDatabase? =null
+        @Synchronized
+        fun getInstance(context: Context) : AppDatabase {
+            return instance?: Room.databaseBuilder(
+                context.applicationContext,
+                AppDatabase::class.java,
+                "WeatherDatabase"
+            ).fallbackToDestructiveMigration().build()
+        }
+    }*/
     lateinit var sharedPreferences: SharedPreferences
 
     private var daysList = mutableListOf<Daily>()

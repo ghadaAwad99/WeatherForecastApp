@@ -1,6 +1,7 @@
 package com.example.weatherforcast.database
 
 import androidx.room.TypeConverter
+import com.example.weatherforcast.model.Alerts
 import com.example.weatherforcast.model.Current
 import com.example.weatherforcast.model.Daily
 import com.example.weatherforcast.model.Hourly
@@ -21,5 +22,10 @@ class Converters {
     fun fromHourlyListToString(hourly: List<Hourly>) = Gson().toJson(hourly)
     @TypeConverter
     fun fromStringToHourlyList(stringHourly : String) = Gson().fromJson(stringHourly, Array<Hourly>::class.java).toList()
+
+    @TypeConverter
+    fun fromAlertToString(alerts: Alerts?) = Gson().toJson(alerts)
+    @TypeConverter
+    fun fromStringToAlert(stringAlert : String) = Gson().fromJson(stringAlert, Alerts::class.java)
 
 }

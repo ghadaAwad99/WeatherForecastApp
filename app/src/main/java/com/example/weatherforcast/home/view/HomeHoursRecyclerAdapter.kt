@@ -11,6 +11,15 @@ import java.util.*
 
 
 class HomeHoursRecyclerAdapter : RecyclerView.Adapter<HoursViewHolder>(){
+    companion object{
+        private var instance = HomeHoursRecyclerAdapter()
+        fun getInstance():HomeHoursRecyclerAdapter{
+            if (instance == null){
+                instance = HomeHoursRecyclerAdapter()
+            }
+            return instance
+        }
+    }
 
     private var hoursList = mutableListOf<Hourly>()
 

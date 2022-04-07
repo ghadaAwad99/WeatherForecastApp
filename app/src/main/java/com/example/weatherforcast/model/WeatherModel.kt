@@ -1,5 +1,6 @@
 package com.example.weatherforcast.model
 
+import androidx.annotation.Nullable
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
@@ -20,6 +21,9 @@ data class WeatherModel(
     val lat: Double,
     @ColumnInfo(name = "lon")
     val lon: Double,
+    @Nullable
+    @ColumnInfo(name = "alerts" , defaultValue = "ALERTS")
+    val alerts: Alerts? = null
     //val timezone: String,
     //val timezone_offset: Double
 )

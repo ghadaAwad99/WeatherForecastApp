@@ -20,7 +20,6 @@ class Repository private constructor(
         unit: String
     ) = weatherInterface.getCurrentTemp(lat, lon, key, language, unit)
 
-
     companion object {
         private var instance: Repository? = null
         fun getInstance( weatherInterface: WeatherInterface,
@@ -37,16 +36,9 @@ class Repository private constructor(
 
     override val allStoredFavorites: LiveData<List<FavoriteModel>> = localSource.allStoredFavorites
 
-    override fun insertToFavorite(favoriteModel: FavoriteModel) {
-        localSource.insertToFavorite(favoriteModel)
-    }
+    override fun insertToFavorite(favoriteModel: FavoriteModel) = localSource.insertToFavorite(favoriteModel)
 
-    override fun deleteFromFavorite(favoriteModel: FavoriteModel) {
-        localSource.deleteFromFavorite(favoriteModel)
-    }
+    override fun deleteFromFavorite(favoriteModel: FavoriteModel) = localSource.deleteFromFavorite(favoriteModel)
 
-    override fun insertLastResponse(weatherModel: WeatherModel) {
-        localSource.insertLastResponse(weatherModel)
-    }
-
+    override fun insertLastResponse(weatherModel: WeatherModel)=localSource.insertLastResponse(weatherModel)
 }
