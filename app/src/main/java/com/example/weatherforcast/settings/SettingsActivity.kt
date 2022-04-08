@@ -8,6 +8,7 @@ import android.os.Bundle
 import android.util.Log
 import android.view.MenuItem
 import android.view.View
+import android.widget.Button
 import android.widget.RadioButton
 import android.widget.RadioGroup
 import android.widget.Toast
@@ -35,6 +36,7 @@ class SettingsActivity : AppCompatActivity() {
     private lateinit var locationRadioButton: RadioButton
     private lateinit var tempRadioButton: RadioButton
     private lateinit var windRadioButton: RadioButton
+    private lateinit var okButton: Button
 
     override fun onCreate(savedInstanceState: Bundle?) {
         Log.i("TAG", "inside settings activity")
@@ -51,11 +53,14 @@ class SettingsActivity : AppCompatActivity() {
         locationRadioGroup = findViewById(R.id.location_radio_group)
         tempRadioGroup = findViewById(R.id.temp_radio_group)
         windRadioGroup = findViewById(R.id.wind_radio_group)
+        okButton = findViewById(R.id.ok_button)
 
         val sharedPreferences = getSharedPreferences(getString(R.string.shared_prefs), MODE_PRIVATE)
         val editor = sharedPreferences.edit()
 
         var lang = "en"
+
+        okButton.setOnClickListener { startActivity(Intent(this, HomeScreen::class.java)) }
 
         languageRadioGroup.setOnCheckedChangeListener { group, checkedId ->
             languageRadioButton = findViewById<View>(checkedId) as RadioButton
@@ -68,7 +73,6 @@ class SettingsActivity : AppCompatActivity() {
             editor.apply()
 
             Utilities.changeLanguage(lang, this)
-            /*this.startActivity(Intent(this, this::class.java))*/
             finish()
 
            /* val config = resources.configuration
@@ -109,41 +113,36 @@ class SettingsActivity : AppCompatActivity() {
         tempRadioGroup.setOnCheckedChangeListener { group, checkedId ->
             tempRadioButton = findViewById<View>(checkedId) as RadioButton
             Toast.makeText(this, tempRadioButton.text, Toast.LENGTH_SHORT).show()
-            editor.putString("TEMP", tempRadioButton.text.toString())
-            editor.apply()
+            when(tempRadioButton.text.toString()){
+                getString(R.string.celsius) -> {
+                    editor.putString("TEMP", "celsius")
+                    editor.apply()
+                }
+                getString(R.string.fehrenheit) -> {
+                    editor.putString("TEMP", "fehrenheit")
+                    editor.apply()
+                }
+                getString(R.string.kelvin)->{
+                    editor.putString("TEMP", "kelvin")
+                    editor.apply()
+                }
+            }
         }
 
         windRadioGroup.setOnCheckedChangeListener { group, checkedId ->
             windRadioButton = findViewById<View>(checkedId) as RadioButton
             Toast.makeText(this, windRadioButton.text, Toast.LENGTH_SHORT).show()
-            editor.putString("WIND", windRadioButton.text.toString())
-            editor.apply()
+            when(windRadioButton.text.toString()) {
+                getString(R.string.meter_sec)->{
+                    editor.putString("WIND", "meter_sec")
+                    editor.apply()
+                }
+                getString(R.string.miles_hour)->{
+                    editor.putString("WIND", "miles_hour")
+                    editor.apply()
+                }
+            }
         }
-
-        /* val selectedlanguage = languageRadioGroup.checkedRadioButtonId
-         languageRadioButton = findViewById(selectedlanguage)
-         Toast.makeText(this@SettingsActivity, languageRadioButton.text, Toast.LENGTH_SHORT).show()
-         editor.putString(getString(R.string.language), languageRadioButton.text.toString())
-         editor.apply()*/
-
-       /* val selectedLocation = locationRadioGroup.checkedRadioButtonId
-        locationRadioButton = findViewById(selectedLocation)
-        Toast.makeText(this@SettingsActivity, locationRadioButton.text, Toast.LENGTH_SHORT).show()
-        editor.putString(getString(R.string.location), locationRadioButton.text.toString())
-        editor.apply()
-
-        val selectedTemp = tempRadioGroup.checkedRadioButtonId
-        tempRadioButton = findViewById(selectedTemp)
-        Toast.makeText(this@SettingsActivity, tempRadioButton.text, Toast.LENGTH_SHORT).show()
-        editor.putString(getString(R.string.temperature), tempRadioButton.text.toString())
-        editor.apply()
-
-        val selectedwindSpeed = windRadioGroup.checkedRadioButtonId
-        windRadioButton = findViewById(selectedwindSpeed)
-        Toast.makeText(this@SettingsActivity, windRadioButton.text, Toast.LENGTH_SHORT).show()
-        editor.putString(getString(R.string.wind_speed), windRadioButton.text.toString())
-        editor.apply()*/
-
 
         toggle = ActionBarDrawerToggle(this, drawerLayout, R.string.open, R.string.close)
         drawerLayout.addDrawerListener(toggle)

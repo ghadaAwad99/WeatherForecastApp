@@ -15,9 +15,13 @@ interface RepositoryInterface {
 
     val allStoredFavorites: LiveData<List<FavoriteModel>>
 
+    val allStoredAlarms: LiveData<List<UserAlarm>>
+
     fun insertToFavorite(favoriteModel: FavoriteModel)
 
     fun deleteFromFavorite(favoriteModel: FavoriteModel)
 
     fun insertLastResponse(weatherModel: WeatherModel)
+
+    fun insertAlarm(userAlarm: UserAlarm)
 }

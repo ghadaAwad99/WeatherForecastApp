@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.room.Delete
 import androidx.room.Insert
 import com.example.weatherforcast.model.FavoriteModel
+import com.example.weatherforcast.model.UserAlarm
 import com.example.weatherforcast.model.WeatherModel
 
 interface LocalSource {
@@ -13,4 +14,7 @@ interface LocalSource {
 
     val storedResponse: LiveData<WeatherModel>
     fun insertLastResponse(weatherModel: WeatherModel)
+
+    val storedAlarms: LiveData<List<UserAlarm>>
+    fun insertAlarm(userAlarm: UserAlarm)
 }

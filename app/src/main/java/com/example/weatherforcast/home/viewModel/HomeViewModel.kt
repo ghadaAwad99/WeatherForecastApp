@@ -14,24 +14,18 @@ import kotlinx.coroutines.withContext
 import java.net.SocketTimeoutException
 
 class HomeViewModel(var repository: RepositoryInterface): ViewModel() {
-   //val daysList = MutableLiveData<List<Day>>()
 
    private val weatherMutableLiveData : MutableLiveData<WeatherModel> = MutableLiveData()
     val weatherLiveData: LiveData<WeatherModel> = weatherMutableLiveData
 
+    /*private val lastLocation : MutableLiveData<WeatherModel> = MutableLiveData()
+    val lastLocationLiveData: LiveData<WeatherModel> = lastLocation*/
 
-
-
-   fun getCurrTemp(lat : Double,
-                  lon : Double,
-                   key : String,
-                   language : String,
-                   unit : String,){
+   fun getCurrTemp(lat : Double, lon : Double, key : String, language : String, unit : String,){
        Log.i("TAG", "inside getCurrTemp")
       viewModelScope.launch(Dispatchers.IO) {
           Log.i("TAG", "inside CoroutineScope")
           try {
-
               val response = repository.getCurrentWeather(lat, lon, key, language, unit)
               Log.i("TAG", "after response")
               withContext(Dispatchers.Main) {

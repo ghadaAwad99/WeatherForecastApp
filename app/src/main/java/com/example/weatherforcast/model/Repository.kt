@@ -36,9 +36,13 @@ class Repository private constructor(
 
     override val allStoredFavorites: LiveData<List<FavoriteModel>> = localSource.allStoredFavorites
 
+    override val allStoredAlarms: LiveData<List<UserAlarm>> = localSource.storedAlarms
+
     override fun insertToFavorite(favoriteModel: FavoriteModel) = localSource.insertToFavorite(favoriteModel)
 
     override fun deleteFromFavorite(favoriteModel: FavoriteModel) = localSource.deleteFromFavorite(favoriteModel)
 
     override fun insertLastResponse(weatherModel: WeatherModel)=localSource.insertLastResponse(weatherModel)
+
+    override fun insertAlarm(userAlarm: UserAlarm)=localSource.insertAlarm(userAlarm)
 }

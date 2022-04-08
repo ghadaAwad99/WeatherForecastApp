@@ -1,9 +1,13 @@
 package com.example.weatherforcast.favorite.view
 
+import android.content.Context
 import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
+import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
 import android.os.Bundle
+import android.util.Log
 import android.view.MenuItem
 import android.widget.Toast
 import androidx.appcompat.app.ActionBar
@@ -57,18 +61,10 @@ class FavoriteActivity : AppCompatActivity(), OnClickListener {
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         navView.setNavigationItemSelectedListener {
             when (it.itemId) {
-                R.id.nav_home -> startActivity(
-                    Intent(this@FavoriteActivity, HomeScreen::class.java)
-                )
-                R.id.nav_settings -> startActivity(
-                    Intent(this@FavoriteActivity, SettingsActivity::class.java)
-                )
-                R.id.nav_favorite -> startActivity(
-                    Intent(this@FavoriteActivity, FavoriteActivity::class.java)
-                )
-                R.id.nav_alerts -> startActivity(
-                    Intent(this@FavoriteActivity, AlertsActivity::class.java)
-                )
+                R.id.nav_home -> startActivity(Intent(this@FavoriteActivity, HomeScreen::class.java))
+                R.id.nav_settings -> startActivity(Intent(this@FavoriteActivity, SettingsActivity::class.java))
+                R.id.nav_favorite -> startActivity(Intent(this@FavoriteActivity, FavoriteActivity::class.java))
+                R.id.nav_alerts -> startActivity(Intent(this@FavoriteActivity, AlertsActivity::class.java))
             }
             true
         }
@@ -85,10 +81,8 @@ class FavoriteActivity : AppCompatActivity(), OnClickListener {
         favoriteViewModel = ViewModelProvider(
             this, factory = FavoriteViewModelFactory(
                 Repository.getInstance(
-                    WeatherService.getInstance(), ConcreteLocalSource(this), this
-                )
-            )
-        ).get(FavoriteViewModel::class.java)
+                    WeatherService.getInstance(), ConcreteLocalSource(this), this)))
+                    .get(FavoriteViewModel::class.java)
 
 
         if (intent.extras?.get("point") != null && intent.extras?.get("locality") != null){
@@ -123,4 +117,5 @@ class FavoriteActivity : AppCompatActivity(), OnClickListener {
         //Toast.makeText(this, "you clicked " + favoriteModel.lat + favoriteModel.lon, Toast.LENGTH_SHORT).show()
         startActivity(favIntent)
     }
+
 }

@@ -17,7 +17,6 @@ import android.os.Build
 import android.os.Bundle
 import android.os.Looper
 import android.provider.Settings
-import android.util.AttributeSet
 import android.util.Log
 import android.view.MenuItem
 import android.view.View
@@ -65,7 +64,7 @@ class HomeScreen : AppCompatActivity() {
     lateinit var currentAdders: String
     private lateinit var sharedPreferences: SharedPreferences
     lateinit var lang: String
-    lateinit var temp: String
+    lateinit var sharedPrefsTemp: String
     private lateinit var choosenLocation: String
     var lat: Double = 0.0
     var lon: Double = 0.0
@@ -79,7 +78,7 @@ class HomeScreen : AppCompatActivity() {
 
         sharedPreferences = getSharedPreferences(getString(R.string.shared_prefs), MODE_PRIVATE)
         lang = sharedPreferences.getString("LANGUAGE", "en").toString()
-        temp = sharedPreferences.getString("TEMP", "").toString()
+        sharedPrefsTemp = sharedPreferences.getString("TEMP", "celsius").toString()
         choosenLocation = sharedPreferences.getString("LOCATION", getString(R.string.gps)).toString()
 
         val actionBar: ActionBar = supportActionBar!!
@@ -214,11 +213,6 @@ class HomeScreen : AppCompatActivity() {
                     Manifest.permission.ACCESS_FINE_LOCATION
                 ), 0
             )
-          /*  onRequestPermissionsResult(0, arrayOf(
-                Manifest.permission.ACCESS_COARSE_LOCATION,
-                Manifest.permission.ACCESS_FINE_LOCATION
-            ),PackageManager.PERMISSION_GRANTED)*/
-
         }
     }
 
@@ -333,7 +327,7 @@ class HomeScreen : AppCompatActivity() {
         return false
     }
 
-        fun initHomeUi(it:WeatherModel){
+        private fun initHomeUi(it:WeatherModel){
             homeDaysRecyclerAdapter.setDaysList(it.daily)
             homeHoursRecyclerAdapter.setHoursList(it.hourly)
 
@@ -347,13 +341,33 @@ class HomeScreen : AppCompatActivity() {
             lateinit var unit: String
             if (lang == "en") {
                 jdf = SimpleDateFormat("EEE, d MMM")
-                temp = it.current.temp.toString()
-                unit = " º"
+                when(sharedPrefsTemp ){
+                    "celsius" ->{ temp = it.current.temp.toString()
+                        unit = " ºC"}
+                    "fehrenheit" -> {
+                        temp = (it.current.temp/2+30).toString()
+                        unit = " ºF"
+                    }
+                    "kelvin" -> {
+                        temp = (it.current.temp + 273.15).toString()
+                        unit = " k"
+                    }
+                }
 
             } else if (lang == "ar") {
                 jdf = SimpleDateFormat("EEE, d MMM", Locale("ar"))
-                temp = Utilities.convertToArabic(it.current.temp.toString())
-                unit = " º"
+                when(sharedPrefsTemp ){
+                    "celsius" ->{ temp = Utilities.convertToArabic(it.current.temp.toString())
+                        unit = " ºC"}
+                    "fehrenheit" -> {
+                        temp = Utilities.convertToArabic((it.current.temp/2+30).toString())
+                        unit = " ف"
+                    }
+                    "kelvin" -> {
+                        temp = Utilities.convertToArabic((it.current.temp + 273.15).toString())
+                        unit = " ك"
+                    }
+                }
             }
             jdf.timeZone = TimeZone.getTimeZone("GMT+2")
             val java_date = jdf.format(date).trimIndent()

@@ -63,7 +63,7 @@ class HomeDaysRecyclerAdapter : RecyclerView.Adapter<DaysViewHolder>() {
         val unix_seconds: Long = day.dt.toLong()
         val date = Date(unix_seconds * 1000L)
         val jdf = SimpleDateFormat("EEE")
-        jdf.timeZone = TimeZone.getTimeZone("GMT-4")
+        jdf.timeZone = TimeZone.getTimeZone("GMT+2")
         var java_date = jdf.format(date).trimIndent()
 
         if (lang.equals("ar")) {

@@ -11,6 +11,8 @@ import com.example.weatherforcast.model.WeatherModel
 import com.example.weatherforcast.settings.SettingsActivity
 import java.io.IOException
 import java.lang.StringBuilder
+import java.text.ParseException
+import java.text.SimpleDateFormat
 import java.util.*
 
 object Utilities : AppCompatActivity() {
@@ -78,5 +80,20 @@ object Utilities : AppCompatActivity() {
             .replace("5".toRegex(), "٥").replace("6".toRegex(), "٦")
             .replace("7".toRegex(), "٧").replace("8".toRegex(), "٨")
             .replace("9".toRegex(), "٩").replace("0".toRegex(), "٠")
+    }
+
+    fun convertDateAndTimeToMills(timeAndDate: String?): Long {
+        val sdf = SimpleDateFormat("dd-MM-yyyy hh:mm")
+        val timeInMilliseconds: Long
+        var mDate: Date? = null
+        try {
+            mDate = sdf.parse(timeAndDate)
+        } catch (e: ParseException) {
+            e.printStackTrace()
+        }
+        Log.i("TAG", "Date m datee: $mDate")
+        timeInMilliseconds = mDate!!.time
+        println("Date in milli :: $timeInMilliseconds")
+        return timeInMilliseconds
     }
 }

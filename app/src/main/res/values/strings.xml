@@ -33,4 +33,5 @@
     <string name="no">no</string>
     <string name="do_you_want_to_choose_this_place">"Do you want to choose this place? "</string>
     <string name="toast_deleted">This Place is Deleted</string>
+    <string name="you_are_offline">You are offline. Some functionality may be unavailable.</string>
 </resources>

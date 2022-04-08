@@ -29,4 +29,5 @@
     <string name="do_you_want_to_choose_this_place">هل تريد اختيار الموقع التالي؟</string>
     <string name="toast_deleted">تم مسح هذا المكان</string>
     <string name="app_name">الطقس</string>
+    <string name="you_are_offline">إنك بلا إنترنت. قد لا تكون بعض الوظائف  متاحة.</string>
 </resources>

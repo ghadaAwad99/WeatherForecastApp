@@ -21,8 +21,7 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
 
-class MapsActivity : AppCompatActivity(), OnMapReadyCallback, /*GoogleMap.OnMarkerDragListener,
-    GoogleMap.OnMarkerClickListener*/  GoogleMap.OnMapClickListener {
+class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMapClickListener {
     lateinit var outIntent: Intent
     lateinit var sharedPreferences: SharedPreferences
     lateinit var lang: String
