@@ -96,4 +96,24 @@ object Utilities : AppCompatActivity() {
         println("Date in milli :: $timeInMilliseconds")
         return timeInMilliseconds
     }
+
+
+    fun convertFinalTime(timeAndDate: String?): Long {
+        // String timeAndDate = day +"-" + month+"-" + year+" " + hour +":" + minutes ; ;// /-03-2022 12:34";//
+        val currentTime = Calendar.getInstance().timeInMillis
+        val sdf = SimpleDateFormat("dd-MM-yyyy hh:mm")
+        val timeInMilliseconds: Long
+        var mDate: Date? = null
+        try {
+            mDate = sdf.parse(timeAndDate)
+        } catch (e: ParseException) {
+            e.printStackTrace()
+        }
+        Log.i("TAG", "Date m datee: $mDate")
+        timeInMilliseconds = mDate!!.time
+        println("Date in milli :: $timeInMilliseconds")
+        val finalTime = timeInMilliseconds - currentTime
+        Log.i("TAG", "final time $finalTime")
+        return finalTime
+    }
 }

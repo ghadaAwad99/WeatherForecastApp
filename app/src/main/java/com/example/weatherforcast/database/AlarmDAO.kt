@@ -11,6 +11,6 @@ interface AlarmDAO {
     @Insert
     fun insertAlarm(userAlarm: UserAlarm)
 
-    @Query("SELECT * FROM UserAlarms")
+    @Query("SELECT * FROM UserAlarms WHERE alarmTime BETWEEN startDate AND endDate")
     fun getAllAlarms() : LiveData<List<UserAlarm>>
 }
