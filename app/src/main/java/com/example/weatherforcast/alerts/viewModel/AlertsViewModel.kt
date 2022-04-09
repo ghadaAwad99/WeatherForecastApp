@@ -23,6 +23,7 @@ import java.util.concurrent.TimeUnit
 
 class AlertsViewModel(private val repository: RepositoryInterface) : ViewModel(){
 
+    lateinit var alarmsList : List<UserAlarm>
     /*private val alarmsMutableLiveData : MutableLiveData<List<UserAlarm>> = MutableLiveData()
     val alarmsLiveData : LiveData<List<UserAlarm>> = alarmsMutableLiveData*/
 
@@ -36,22 +37,28 @@ class AlertsViewModel(private val repository: RepositoryInterface) : ViewModel()
         return repository.allStoredAlarms
     }
 
-    /*@RequiresApi(api = Build.VERSION_CODES.O)
-    fun findNextAlarm() {  // in view model + get alarms from database in view model
-        WorkManager.getInstance().cancelAllWorkByTag("alarms")
-        val currentTime = Calendar.getInstance().timeInMillis
-        Log.i("TAG", "current time$currentTime")
-        var smallest = currentTime
-        var scheduledAlarm: String? = null
-        val localDate = LocalDate.now()
-        val userAlarm: UserAlarm? = null
-        Log.e("MedList", "alarms list" + repository.allStoredAlarms)
-        for (alarm in repository.allStoredAlarms) {
-          //  for (time in 0 until ) {
+    fun setAlarmsListForManager(alarmsList : List<UserAlarm>){
+        this.alarmsList = alarmsList
+    }
+
+
+    companion object {
+        @RequiresApi(api = Build.VERSION_CODES.O)
+        fun findNextAlarm(alarmsList: List<UserAlarm>) {
+            WorkManager.getInstance().cancelAllWorkByTag("alarms")
+            val currentTime = Calendar.getInstance().timeInMillis
+            Log.i("TAG", "current time$currentTime")
+            var smallest = currentTime
+            var scheduledAlarm: String? = null
+            var timeInMills: Long = 0
+            for (alarm in alarmsList) {
                 Log.i("TAG", " ")
                 Log.i("TAG", " ")
-                val timeInMills: Long = alarm.alarmTime
-                Log.i("TAG", "In side findRestMills " + timeInMills +  " " + (timeInMills - currentTime))
+                timeInMills = alarm.alarmTime
+                Log.i(
+                    "TAG",
+                    "In side findRestMills " + timeInMills + " " + (timeInMills - currentTime)
+                )
                 Log.i("TAG", "current time$currentTime")
                 if (timeInMills - currentTime >= 0 && timeInMills - currentTime < smallest) {
                     smallest = timeInMills - currentTime
@@ -59,21 +66,22 @@ class AlertsViewModel(private val repository: RepositoryInterface) : ViewModel()
                     Log.i("TAG", "FinfResut If $scheduledAlarm")
 
                 }
-          //  }
-        }
-        if (scheduledAlarm != null) {
-            Log.i("TAG", "In side smallest reminder method")
-            val finalTime: Long = Utilities.convertFinalTime(scheduledAlarm)
-            val data = Data.Builder()
-                .build()
-            val reminderRequest = OneTimeWorkRequest.Builder(AlertsWorkManger::class.java)
-                .setInitialDelay(finalTime, TimeUnit.MILLISECONDS)
-                .setInputData(data)
-                .addTag("alarms")
-                .build()
-            WorkManager.getInstance().enqueue(reminderRequest)
-        }
+            }
+            if (scheduledAlarm != null) {
+                val currentTime = Calendar.getInstance().timeInMillis
+                Log.i("TAG", "In side smallest reminder method")
+                val finalTime = timeInMills - currentTime
+                val data = Data.Builder()
+                    .build()
+                val reminderRequest = OneTimeWorkRequest.Builder(AlertsWorkManger::class.java)
+                    .setInitialDelay(finalTime, TimeUnit.MILLISECONDS)
+                    .setInputData(data)
+                    .addTag("alarms")
+                    .build()
+                WorkManager.getInstance().enqueue(reminderRequest)
+            }
 
-    }*/
+        }
+    }
 
 }

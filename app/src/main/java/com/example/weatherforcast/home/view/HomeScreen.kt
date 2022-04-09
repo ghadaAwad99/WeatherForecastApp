@@ -139,6 +139,8 @@ class HomeScreen : AppCompatActivity() {
                         lang,
                         "metric"
                     )
+                    sharedPreferences.edit().putFloat("MapLat",lat.toFloat()).apply()
+                    sharedPreferences.edit().putFloat("MapLon",lon.toFloat()).apply()
                 }
             }
 
@@ -195,6 +197,9 @@ class HomeScreen : AppCompatActivity() {
                             currentAdders = Utilities.getAddress(lat, lon, lang, this)
                             Log.i("TAG", "before getCurrTemp")
                             viewModel.getCurrTemp(lat, lon,Utilities.ApiKey, lang,"metric")
+                            sharedPreferences.edit().putFloat("GPSLat",lat.toFloat()).apply()
+                            sharedPreferences.edit().putFloat("GPSLon",lon.toFloat()).apply()
+
 
                             Log.i("TAG", "getLastLocation lat is " + lat + "lon is " + lon + " and lang is " + lang)
                         }
@@ -233,19 +238,8 @@ class HomeScreen : AppCompatActivity() {
                     getLastLocation()
                 }
                 else -> {
-                    showSnackbar("Permission was denied", "Settings",
-                        View.OnClickListener {
-                            // Build intent that displays the App settings screen.
-                            val intent = Intent()
-                            intent.action = Settings.ACTION_APPLICATION_DETAILS_SETTINGS
-                            val uri = Uri.fromParts(
-                                "package",
-                                Build.DISPLAY, null
-                            )
-                            intent.data = uri
-                            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
-                            startActivity(intent)
-                        }
+                    showSnackbar("Location Permission is Required", "Settings",
+                       finish()
                     )
                 }
             }
@@ -254,7 +248,7 @@ class HomeScreen : AppCompatActivity() {
 
     private fun showSnackbar(
         mainTextStringId: String, actionStringId: String,
-        listener: View.OnClickListener
+        listener: Unit
     ) {
         Toast.makeText(this, mainTextStringId, Toast.LENGTH_LONG).show()
     }
@@ -300,6 +294,8 @@ class HomeScreen : AppCompatActivity() {
 
             currentAdders = Utilities.getAddress(lat, lon, lang, this@HomeScreen)
             viewModel.getCurrTemp(lat, lon, Utilities.ApiKey, lang, "metric")
+            sharedPreferences.edit().putFloat("GPSLat",lat.toFloat()).apply()
+            sharedPreferences.edit().putFloat("GPSLon",lon.toFloat()).apply()
 
             Log.i("TAG", "onLocationResult lat is " + lat + "lon is " + lon + " and lang is " + lang)
         }

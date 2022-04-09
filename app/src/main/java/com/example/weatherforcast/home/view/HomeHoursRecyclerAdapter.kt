@@ -48,7 +48,7 @@ class HomeHoursRecyclerAdapter : RecyclerView.Adapter<HoursViewHolder>(){
         val date = Date(unix_seconds * 1000L)
         // format of the date
         //val jdf = SimpleDateFormat("EEE yyyy-MM-dd HH:mm")
-        val jdf = SimpleDateFormat("HH:mm")
+        val jdf = SimpleDateFormat("HH:mm a")
         jdf.timeZone = TimeZone.getTimeZone("GMT+2")
         val java_date = jdf.format(date).trimIndent()
         holder.binding.hourName.text =java_date
