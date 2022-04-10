@@ -21,11 +21,13 @@ import android.util.Log
 import android.view.MenuItem
 import android.view.View
 import android.widget.ImageView
+import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.ActionBar
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.cardview.widget.CardView
 import androidx.core.app.ActivityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.lifecycle.ViewModelProvider
@@ -44,6 +46,7 @@ import com.example.weatherforcast.settings.SettingsActivity
 import com.google.android.gms.location.*
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.material.navigation.NavigationView
+import com.google.android.material.snackbar.Snackbar
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -70,6 +73,8 @@ class HomeScreen : AppCompatActivity() {
     var lon: Double = 0.0
     private lateinit var toggle: ActionBarDrawerToggle
     private lateinit var fusedLocationClient: FusedLocationProviderClient
+    lateinit var tempCardView: CardView
+    lateinit var progressBar: ProgressBar
 
     override fun onCreate(savedInstanceState: Bundle?) {
         Log.i("TAG", "Inside home screen activity")
@@ -95,9 +100,11 @@ class HomeScreen : AppCompatActivity() {
         currentTempText = findViewById(R.id.current_temp_text)
         currentMain = findViewById(R.id.current_main)
         noDataText = findViewById(R.id.no_data_taxt)
+        tempCardView = findViewById(R.id.temp_cardView)
+        progressBar = findViewById(R.id.progressBar)
 
-        homeDaysRecyclerAdapter = HomeDaysRecyclerAdapter.getInstance()
-        homeHoursRecyclerAdapter = HomeHoursRecyclerAdapter.getInstance()
+        homeDaysRecyclerAdapter = HomeDaysRecyclerAdapter()
+        homeHoursRecyclerAdapter = HomeHoursRecyclerAdapter()
         recyclerView.adapter = homeDaysRecyclerAdapter
         hoursRecyclerView.adapter = homeHoursRecyclerAdapter
         viewModel = ViewModelProvider(
@@ -109,10 +116,12 @@ class HomeScreen : AppCompatActivity() {
         ).get(HomeViewModel::class.java)
 
         if (!isOnline(this)) {
-            Toast.makeText(this, "you are offline", Toast.LENGTH_SHORT).show()
+            Snackbar.make(tempCardView, getString(R.string.you_are_offline), Snackbar.LENGTH_LONG ).show()
                 viewModel.getLastResponseFromRoom()
             viewModel.weatherLiveData.observe(this, {
                 it.id = 0
+                tempCardView.visibility = View.VISIBLE
+                progressBar.visibility = View.GONE
                 viewModel.insertLastResponse(it)
                 Log.d("TAG", "onCreate: ${it.daily}")
                 initHomeUi(it)
@@ -150,6 +159,8 @@ class HomeScreen : AppCompatActivity() {
             viewModel.weatherLiveData.observe(this, {
                 it.id = 0
                 viewModel.insertLastResponse(it)
+                tempCardView.visibility = View.VISIBLE
+                progressBar.visibility = View.GONE
                 Log.d("TAG", "onCreate: ${it.daily}")
                 initHomeUi(it)
             })

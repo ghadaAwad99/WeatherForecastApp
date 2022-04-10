@@ -12,12 +12,17 @@ android:id="@+id/drawerLayout"
 <FrameLayout
     android:id="@+id/frame"
     android:layout_width="match_parent"
-    android:layout_height="match_parent" />
+    android:layout_height="match_parent"
+    />
+
+
 
  <androidx.constraintlayout.widget.ConstraintLayout
      android:layout_width="match_parent"
      android:layout_height="match_parent"
      tools:context=".home.view.HomeScreen">
+
+
 
   <ScrollView
       android:layout_width="match_parent"
@@ -26,9 +31,24 @@ android:id="@+id/drawerLayout"
       tools:layout_editor_absoluteY="28dp">
 
 
+
    <androidx.constraintlayout.widget.ConstraintLayout
        android:layout_width="match_parent"
        android:layout_height="wrap_content">
+
+
+    <ProgressBar
+        android:id="@+id/progressBar"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="288dp"
+        android:layout_height="49dp"
+        android:layout_marginTop="200dp"
+        android:layout_marginBottom="200dp"
+        android:indeterminate="true"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/no_data_taxt"
@@ -111,6 +131,7 @@ android:visibility="gone"
 
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
+        android:visibility="gone"
 
 
         >
@@ -175,7 +196,7 @@ android:visibility="gone"
           android:layout_height="wrap_content"
           android:layout_marginStart="30dp"
           android:layout_marginTop="30dp"
-          android:text="@string/today"
+          android:text="@string/now"
           android:textColor="@color/white"
           android:textSize="22sp"
           app:layout_constraintStart_toStartOf="parent"
@@ -207,6 +228,8 @@ android:visibility="gone"
      </androidx.constraintlayout.widget.ConstraintLayout>
 
     </androidx.cardview.widget.CardView>
+
+
 
    </androidx.constraintlayout.widget.ConstraintLayout>
 

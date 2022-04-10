@@ -8,6 +8,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
 import androidx.room.Room
 import com.example.weatherforcast.R
+import com.example.weatherforcast.Utilities
 import com.example.weatherforcast.database.AppDatabase
 import com.example.weatherforcast.databinding.DayItemBinding
 import com.example.weatherforcast.model.Daily
@@ -16,27 +17,8 @@ import java.util.*
 
 class HomeDaysRecyclerAdapter : RecyclerView.Adapter<DaysViewHolder>() {
 
-    companion object{
-        private var instance = HomeDaysRecyclerAdapter()
-        fun getInstance():HomeDaysRecyclerAdapter{
-            if (instance == null){
-                instance = HomeDaysRecyclerAdapter()
-            }
-            return instance
-        }
-    }
-/*    companion object{
-        private var instance : AppDatabase? =null
-        @Synchronized
-        fun getInstance(context: Context) : AppDatabase {
-            return instance?: Room.databaseBuilder(
-                context.applicationContext,
-                AppDatabase::class.java,
-                "WeatherDatabase"
-            ).fallbackToDestructiveMigration().build()
-        }
-    }*/
     lateinit var sharedPreferences: SharedPreferences
+    lateinit var sharedPrefsTemp: String
 
     private var daysList = mutableListOf<Daily>()
 
@@ -58,28 +40,56 @@ class HomeDaysRecyclerAdapter : RecyclerView.Adapter<DaysViewHolder>() {
             AppCompatActivity.MODE_PRIVATE
         )
         var lang = sharedPreferences.getString("LANGUAGE", "en")
+        sharedPrefsTemp = sharedPreferences.getString("TEMP", "celsius").toString()
         var day = daysList[position]
+
+        lateinit var jdf: SimpleDateFormat
+        lateinit var maxTemp: String
+        lateinit var minTemp: String
+        lateinit var unit: String
 
         val unix_seconds: Long = day.dt.toLong()
         val date = Date(unix_seconds * 1000L)
-        val jdf = SimpleDateFormat("EEE")
+        jdf = SimpleDateFormat("EEE", Locale(lang))
         jdf.timeZone = TimeZone.getTimeZone("GMT+2")
         var java_date = jdf.format(date).trimIndent()
 
         if (lang.equals("ar")) {
-            when (java_date) {
-                "Sun" -> java_date = "الأحد"
-                "Mon" -> java_date = "الإثنين"
-                "Tue" -> java_date = "الثلاثاء"
-                "Wed" -> java_date = "الأربعاء"
-                "Thu" -> java_date = "الخميس"
-                "Fri" -> java_date = "الجمعة"
-                "Sat" -> java_date = "السبت"
+             when(sharedPrefsTemp ){
+                "celsius" ->{ maxTemp = Utilities.convertToArabic(day.temp.max.toString())
+                    minTemp = Utilities.convertToArabic(day.temp.min.toString())
+                    unit = " ºC"}
+                "fehrenheit" -> {
+                    maxTemp = Utilities.convertToArabic((day.temp.max/2+30).toString())
+                    minTemp = Utilities.convertToArabic((day.temp.min/2+30).toString())
+                    unit = " ف"
+                }
+                "kelvin" -> {
+                    maxTemp = Utilities.convertToArabic((day.temp.max + 273.15).toString())
+                    minTemp = Utilities.convertToArabic((day.temp.min + 273.15).toString())
+                    unit = " ك"
+                }
+            }
+        }else if (lang == "en") {
+            when(sharedPrefsTemp ){
+                "celsius" ->{ maxTemp = day.temp.max.toString()
+                    minTemp = day.temp.min.toString()
+                    unit = " ºC"}
+                "fehrenheit" -> {
+                    maxTemp = (day.temp.max/2+30).toString()
+                    minTemp = (day.temp.min/2+30).toString()
+                    unit = " ºF"
+                }
+                "kelvin" -> {
+                    maxTemp = (day.temp.max + 273.15).toString()
+                    minTemp = (day.temp.min + 273.15).toString()
+                    unit = " k"
+                }
             }
         }
         holder.binding.dayName.text = java_date
-        holder.binding.dayTempMax.text = day.temp.max.toString() + " k"
-        holder.binding.dayTempMin.text = day.temp.min.toString() + " k"
+        holder.binding.dayTempMax.text = maxTemp + unit
+        holder.binding.dayTempMin.text = minTemp + unit
         holder.binding.dayState.text = day.weather[0].description/*day.weather[0].main*/
 
         when (day.weather[0].main) {

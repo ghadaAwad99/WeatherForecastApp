@@ -3,11 +3,14 @@ package com.example.weatherforcast.home.view
 import android.app.Dialog
 import android.content.Intent
 import android.content.SharedPreferences
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.view.Window
 import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
+import androidx.appcompat.app.ActionBar
 import androidx.appcompat.app.AppCompatActivity
 import com.example.weatherforcast.R
 import com.example.weatherforcast.Utilities
@@ -34,6 +37,10 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMapCli
     override fun onCreate(savedInstanceState: Bundle?) {
 
         super.onCreate(savedInstanceState)
+
+        val actionBar: ActionBar = supportActionBar!!
+        val colorDrawable = ColorDrawable(Color.parseColor("#5B86E5"))
+        actionBar.setBackgroundDrawable(colorDrawable)
 
         sharedPreferences = getSharedPreferences(getString(R.string.shared_prefs), MODE_PRIVATE)
         lang = sharedPreferences.getString("LANGUAGE", "en").toString()

@@ -233,19 +233,6 @@
                         android:buttonTint="@color/white"/>
                 </RadioGroup>
 
-                <Button
-                    android:id="@+id/ok_button"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="15dp"
-                    android:layout_marginBottom="15dp"
-                    android:text="@string/DONE"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    android:backgroundTint="@color/white"
-                    android:textColor="@color/blue"
-                    app:layout_constraintTop_toBottomOf="@id/wind_radio_group" />
-
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 

@@ -19,6 +19,19 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
+                <ProgressBar
+                    android:id="@+id/progressBar"
+                    style="?android:attr/progressBarStyleHorizontal"
+                    android:layout_width="288dp"
+                    android:layout_height="49dp"
+                    android:layout_marginTop="200dp"
+                    android:layout_marginBottom="200dp"
+                    android:indeterminate="true"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
                 <com.google.android.material.card.MaterialCardView
                     android:id="@+id/days_hours_CardView"
                     android:layout_width="match_parent"
@@ -87,7 +100,7 @@
 
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-
+                    android:visibility="gone"
 
                     >
 
@@ -151,7 +164,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginStart="30dp"
                             android:layout_marginTop="30dp"
-                            android:text="@string/today"
+                            android:text="@string/now"
                             android:textColor="@color/white"
                             android:textSize="22sp"
                             app:layout_constraintStart_toStartOf="parent"

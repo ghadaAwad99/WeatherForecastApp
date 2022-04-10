@@ -16,10 +16,10 @@
         <entry key="..\:/Ghada/ITI/Kotlin/WeatherForcast/app/src/main/res/layout/activity_drawer.xml" value="0.25416666666666665" />
         <entry key="..\:/Ghada/ITI/Kotlin/WeatherForcast/app/src/main/res/layout/activity_favorite.xml" value="0.28892835997631733" />
         <entry key="..\:/Ghada/ITI/Kotlin/WeatherForcast/app/src/main/res/layout/activity_favorite_item_details.xml" value="0.25416666666666665" />
-        <entry key="..\:/Ghada/ITI/Kotlin/WeatherForcast/app/src/main/res/layout/activity_home_screen.xml" value="0.34572490706319703" />
+        <entry key="..\:/Ghada/ITI/Kotlin/WeatherForcast/app/src/main/res/layout/activity_home_screen.xml" value="0.2" />
         <entry key="..\:/Ghada/ITI/Kotlin/WeatherForcast/app/src/main/res/layout/activity_main.xml" value="0.2853107344632768" />
         <entry key="..\:/Ghada/ITI/Kotlin/WeatherForcast/app/src/main/res/layout/activity_settings.xml" value="0.1" />
-        <entry key="..\:/Ghada/ITI/Kotlin/WeatherForcast/app/src/main/res/layout/activity_splash_screen.xml" value="0.536" />
+        <entry key="..\:/Ghada/ITI/Kotlin/WeatherForcast/app/src/main/res/layout/activity_splash_screen.xml" value="0.264" />
         <entry key="..\:/Ghada/ITI/Kotlin/WeatherForcast/app/src/main/res/layout/alert_custom_dialog.xml" value="0.4" />
         <entry key="..\:/Ghada/ITI/Kotlin/WeatherForcast/app/src/main/res/layout/customborder.xml" value="0.25416666666666665" />
         <entry key="..\:/Ghada/ITI/Kotlin/WeatherForcast/app/src/main/res/layout/day_item.xml" value="0.6941340782122905" />
@@ -31,7 +31,7 @@
         <entry key="..\:/Ghada/ITI/Kotlin/WeatherForcast/app/src/main/res/layout/hour_item.xml" value="0.536" />
         <entry key="..\:/Ghada/ITI/Kotlin/WeatherForcast/app/src/main/res/layout/nav_header.xml" value="0.6" />
         <entry key="..\:/Ghada/ITI/Kotlin/WeatherForcast/app/src/main/res/menu/menu.xml" value="0.1" />
-        <entry key="..\:/Ghada/ITI/Kotlin/WeatherForcast/app/src/main/res/menu/nav_menu.xml" value="0.536" />
+        <entry key="..\:/Ghada/ITI/Kotlin/WeatherForcast/app/src/main/res/menu/nav_menu.xml" value="0.13405797101449277" />
       </map>
     </option>
   </component>

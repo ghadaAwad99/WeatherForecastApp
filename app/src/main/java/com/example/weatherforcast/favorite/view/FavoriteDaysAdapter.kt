@@ -14,6 +14,7 @@ import java.util.*
 
 class FavoriteDaysAdapter : RecyclerView.Adapter<FavoriteDaysAdapter.FavDaysViewHolder>() {
     lateinit var sharedPreferences: SharedPreferences
+    lateinit var sharedPrefsTemp: String
 
     private var daysList = mutableListOf<Daily>()
 
@@ -38,36 +39,57 @@ class FavoriteDaysAdapter : RecyclerView.Adapter<FavoriteDaysAdapter.FavDaysView
             AppCompatActivity.MODE_PRIVATE
         )
         var lang = sharedPreferences.getString("LANGUAGE", "en")
+        sharedPrefsTemp = sharedPreferences.getString("TEMP", "celsius").toString()
+
         var day = daysList[position]
+
+        lateinit var jdf: SimpleDateFormat
+        lateinit var maxTemp: String
+        lateinit var minTemp: String
+        lateinit var unit: String
 
         val unix_seconds: Long = day.dt.toLong()
         val date = Date(unix_seconds * 1000L)
-        val jdf = SimpleDateFormat("EEE")
+        jdf = SimpleDateFormat("EEE", Locale(lang))
         jdf.timeZone = TimeZone.getTimeZone("GMT+2")
         var java_date = jdf.format(date).trimIndent()
 
-        /*  if(lang.equals("en")){
-               when(position){
-                   0->java_date="Today"}
-
-           }else*/ if (lang.equals("ar")) {
-            /*   when(position){
-                   0->java_date="اليوم"
-                   1-> java_date = "غدا"}*/
-            when (java_date) {
-                "Sun" -> java_date = "الأحد"
-                "Mon" -> java_date = "الإثنين"
-                "Tue" -> java_date = "الثلاثاء"
-                "Wed" -> java_date = "الأربعاء"
-                "Thu" -> java_date = "الخميس"
-                "Fri" -> java_date = "الجمعة"
-                "Sat" -> java_date = "السبت"
+        if (lang.equals("ar")) {
+            when(sharedPrefsTemp ){
+                "celsius" ->{ maxTemp = Utilities.convertToArabic(day.temp.max.toString())
+                    minTemp = Utilities.convertToArabic(day.temp.min.toString())
+                    unit = " ºC"}
+                "fehrenheit" -> {
+                    maxTemp = Utilities.convertToArabic((day.temp.max/2+30).toString())
+                    minTemp = Utilities.convertToArabic((day.temp.min/2+30).toString())
+                    unit = " ف"
+                }
+                "kelvin" -> {
+                    maxTemp = Utilities.convertToArabic((day.temp.max + 273.15).toString())
+                    minTemp = Utilities.convertToArabic((day.temp.min + 273.15).toString())
+                    unit = " ك"
+                }
+            }
+        }else if (lang == "en") {
+            when(sharedPrefsTemp ){
+                "celsius" ->{ maxTemp = day.temp.max.toString()
+                    minTemp = day.temp.min.toString()
+                    unit = " ºC"}
+                "fehrenheit" -> {
+                    maxTemp = (day.temp.max/2+30).toString()
+                    minTemp = (day.temp.min/2+30).toString()
+                    unit = " ºF"
+                }
+                "kelvin" -> {
+                    maxTemp = (day.temp.max + 273.15).toString()
+                    minTemp = (day.temp.min + 273.15).toString()
+                    unit = " k"
+                }
             }
         }
-        // }
         holder.binding.dayName.text = java_date
-        holder.binding.dayTempMax.text = day.temp.max.toString()
-        holder.binding.dayTempMin.text = day.temp.min.toString()
+        holder.binding.dayTempMax.text = maxTemp + unit
+        holder.binding.dayTempMin.text = minTemp + unit
         holder.binding.dayState.text = day.weather[0].description/*day.weather[0].main*/
 
 

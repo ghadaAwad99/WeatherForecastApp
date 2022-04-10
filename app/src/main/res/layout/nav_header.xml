@@ -11,8 +11,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="13dp"
         android:layout_marginTop="16dp"
-        android:text="Weather"
-        android:fontFamily="@font/akhirtahun"
+        android:text="Cloudy"
         android:textSize="17sp"
         app:layout_constraintStart_toEndOf="@+id/imageView2"
         app:layout_constraintTop_toTopOf="parent" />
@@ -33,5 +32,5 @@
         android:layout_marginTop="3dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/ic_cloudy_cloud_svgrepo_com" />
+        app:srcCompat="@drawable/cloudy_icon" />
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -36,13 +36,13 @@ class SettingsActivity : AppCompatActivity() {
     private lateinit var locationRadioButton: RadioButton
     private lateinit var tempRadioButton: RadioButton
     private lateinit var windRadioButton: RadioButton
-    private lateinit var okButton: Button
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         Log.i("TAG", "inside settings activity")
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_settings)
-        this.title = "Settings"
+        this.title = getString(R.string.settings)
         val actionBar: ActionBar = supportActionBar!!
         val colorDrawable = ColorDrawable(Color.parseColor("#5B86E5"))
         actionBar.setBackgroundDrawable(colorDrawable)
@@ -53,14 +53,13 @@ class SettingsActivity : AppCompatActivity() {
         locationRadioGroup = findViewById(R.id.location_radio_group)
         tempRadioGroup = findViewById(R.id.temp_radio_group)
         windRadioGroup = findViewById(R.id.wind_radio_group)
-        okButton = findViewById(R.id.ok_button)
+
 
         val sharedPreferences = getSharedPreferences(getString(R.string.shared_prefs), MODE_PRIVATE)
         val editor = sharedPreferences.edit()
 
         var lang = "en"
 
-        okButton.setOnClickListener { startActivity(Intent(this, HomeScreen::class.java)) }
 
         languageRadioGroup.setOnCheckedChangeListener { group, checkedId ->
             languageRadioButton = findViewById<View>(checkedId) as RadioButton
@@ -74,17 +73,6 @@ class SettingsActivity : AppCompatActivity() {
 
             Utilities.changeLanguage(lang, this)
             finish()
-
-           /* val config = resources.configuration
-
-            val locale = Locale(lang)
-            Locale.setDefault(locale)
-            config.setLocale(locale)
-
-            createConfigurationContext(config)
-            resources.updateConfiguration(config, resources.displayMetrics)
-            finish()
-            startActivity(Intent(this, SettingsActivity::class.java))*/
         }
 
 

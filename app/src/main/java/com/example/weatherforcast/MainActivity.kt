@@ -82,20 +82,8 @@ class MainActivity : AppCompatActivity() {
 
 
 
-        val okButton: Button = findViewById(R.id.ok_button)
-        val radioGroup: RadioGroup = findViewById(R.id.location_radio_group)
-        okButton.setOnClickListener {
-          /*  val selectedId = radioGroup.checkedRadioButtonId
-            radioButton = findViewById(selectedId)
-            Toast.makeText(this@MainActivity, radioButton.text, Toast.LENGTH_SHORT).show()
-            //save location choice on shared prefs
-            val editor = sharedPreferences.edit()
-            editor.putString("LOCATION", radioButton.text.toString())
-            editor.apply()*/
 
-            val intent = Intent(this@MainActivity, HomeScreen::class.java)
-            startActivity(intent)
-        }
+        val radioGroup: RadioGroup = findViewById(R.id.location_radio_group)
 
         val actionBar: ActionBar = supportActionBar!!
         val colorDrawable = ColorDrawable(Color.parseColor("#5B86E5"))

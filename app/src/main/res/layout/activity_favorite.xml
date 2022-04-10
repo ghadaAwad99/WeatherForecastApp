@@ -10,10 +10,6 @@
     >
 
 
-
-
-
-
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -28,11 +24,10 @@
             android:layout_marginEnd="16dp"
             android:layout_marginBottom="16dp"
             android:src="@drawable/ic_add"
+            app:backgroundTint="@color/blue"
             app:fabSize="normal"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:backgroundTint="@color/blue"
-            />
+            app:layout_constraintEnd_toEndOf="parent" />
 
         <ImageView
             android:id="@+id/imageView4"
@@ -42,7 +37,7 @@
             android:layout_marginTop="30dp"
             android:layout_marginEnd="10dp"
             android:layout_marginBottom="20dp"
-            android:src="@drawable/favorite"
+            android:src="@drawable/fav_location"
             app:layout_constraintBottom_toTopOf="@id/scroll_view"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -84,6 +79,8 @@
 
             </com.google.android.material.card.MaterialCardView>
         </ScrollView>
+
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <com.google.android.material.navigation.NavigationView

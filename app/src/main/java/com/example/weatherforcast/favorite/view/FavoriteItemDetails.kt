@@ -4,9 +4,12 @@ import android.content.SharedPreferences
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
+import android.view.View
+import android.widget.ProgressBar
 import android.widget.Toast
 import androidx.appcompat.app.ActionBar
 import androidx.appcompat.app.AppCompatActivity
+import androidx.cardview.widget.CardView
 import androidx.lifecycle.ViewModelProvider
 import com.example.weatherforcast.R
 import com.example.weatherforcast.Utilities
@@ -31,12 +34,13 @@ class FavoriteItemDetails : AppCompatActivity(), OnClickListener {
     lateinit var jdf: SimpleDateFormat
     lateinit var temp: String
     lateinit var unit: String
+    lateinit var sharedPrefsTemp: String
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val actionBar: ActionBar = supportActionBar!!
         val colorDrawable = ColorDrawable(Color.parseColor("#5B86E5"))
         actionBar.setBackgroundDrawable(colorDrawable)
-        this.title = "Favorite Locations"
+        this.title = getString(R.string.fav_locations)
         binding = ActivityFavoriteItemDetailsBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
@@ -44,6 +48,7 @@ class FavoriteItemDetails : AppCompatActivity(), OnClickListener {
 
         sharedPreferences = getSharedPreferences(getString(R.string.shared_prefs), MODE_PRIVATE)
         lang = sharedPreferences.getString("LANGUAGE", "en").toString()
+        sharedPrefsTemp = sharedPreferences.getString("TEMP", "celsius").toString()
 
         favoriteDaysAdapter = FavoriteDaysAdapter()
         favoriteHoursAdapter = FavoriteHoursAdapter()
@@ -69,6 +74,9 @@ class FavoriteItemDetails : AppCompatActivity(), OnClickListener {
         viewModel.getCurrTemp(favoriteModel.lat, favoriteModel.lon,Utilities.ApiKey, lang, "metric")
         viewModel.weatherLiveData.observe(this, {
 
+            binding.tempCardView.visibility = View.VISIBLE
+            binding.progressBar.visibility = View.GONE
+
             favoriteDaysAdapter.setFavDaysList(it.daily)
             favoriteHoursAdapter.setFavHoursList(it.hourly)
             binding.currentMain.text = it.current.weather[0].description
@@ -76,15 +84,38 @@ class FavoriteItemDetails : AppCompatActivity(), OnClickListener {
 
             val unix_seconds: Long = it.current.dt.toLong()
             val date = Date(unix_seconds * 1000L)
-            jdf = SimpleDateFormat("EEE, d MMM", Locale(lang))
-
+            lateinit var jdf: SimpleDateFormat
+            lateinit var temp: String
+            lateinit var unit: String
             if (lang == "en") {
-                temp = it.current.temp.toString()
-                unit = " k"
+                jdf = SimpleDateFormat("EEE, d MMM")
+                when(sharedPrefsTemp ){
+                    "celsius" ->{ temp = it.current.temp.toString()
+                        unit = " ºC"}
+                    "fehrenheit" -> {
+                        temp = (it.current.temp/2+30).toString()
+                        unit = " ºF"
+                    }
+                    "kelvin" -> {
+                        temp = (it.current.temp + 273.15).toString()
+                        unit = " k"
+                    }
+                }
 
             } else if (lang == "ar") {
-                temp = Utilities.convertToArabic(it.current.temp.toString())
-                unit = " ك"
+                jdf = SimpleDateFormat("EEE, d MMM", Locale("ar"))
+                when(sharedPrefsTemp ){
+                    "celsius" ->{ temp = Utilities.convertToArabic(it.current.temp.toString())
+                        unit = " ºC"}
+                    "fehrenheit" -> {
+                        temp = Utilities.convertToArabic((it.current.temp/2+30).toString())
+                        unit = " ف"
+                    }
+                    "kelvin" -> {
+                        temp = Utilities.convertToArabic((it.current.temp + 273.15).toString())
+                        unit = " ك"
+                    }
+                }
             }
             jdf.timeZone = TimeZone.getTimeZone("GMT+2")
             val java_date = jdf.format(date).trimIndent()
