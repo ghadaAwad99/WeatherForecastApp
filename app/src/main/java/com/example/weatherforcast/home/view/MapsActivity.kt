@@ -77,6 +77,10 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMapCli
                 outIntent = Intent(this, HomeScreen::class.java)
                 outIntent.putExtra("point", point)
                 outIntent.putExtra("locality",location)
+                sharedPreferences.edit().putFloat("MapLat",point.latitude.toFloat()).apply()
+                sharedPreferences.edit().putFloat("MapLon",point.longitude.toFloat()).apply()
+                sharedPreferences.edit().putString("locality",location).apply()
+
 
 
             }

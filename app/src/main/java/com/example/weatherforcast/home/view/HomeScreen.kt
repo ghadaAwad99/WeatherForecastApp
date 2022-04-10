@@ -118,29 +118,33 @@ class HomeScreen : AppCompatActivity() {
                 initHomeUi(it)
             })
         }else {
-            Log.i("TAG", getString(R.string.gps))
             if (choosenLocation == "GPS") {
                 Log.i("TAG", "inside choosenLocation == getString(R.string.gps)")
                 getLastLocation()
             } else if (choosenLocation == "Map") {
-                if (intent.extras?.get("point") != null) {
-                    var point: LatLng = intent.extras?.get("point") as LatLng
-                    Toast.makeText(
+                Log.i("TAG", "inside choosenLocation == Map")
+               // if (intent.extras?.get("point") != null) {
+                lat = sharedPreferences.getFloat("MapLat", 0f).toDouble()
+                lon = sharedPreferences.getFloat("MapLon", 0f).toDouble()
+                    Log.i("TAG", "inside intent.extras?.get(point) != null")
+                    //var point: LatLng = intent.extras?.get("point") as LatLng
+                   /* Toast.makeText(
                         this,
                         "map is chosen and lat is " + point.latitude + "and lon is " + point.longitude,
                         Toast.LENGTH_SHORT
-                    ).show()
-                    currentAdders = intent.extras?.get("locality") as String
+                    ).show()*/
+                    currentAdders =
+                        sharedPreferences.getString("locality", "Unknown").toString() /*intent.extras?.get("locality") as String*/
                     viewModel.getCurrTemp(
-                        point.latitude,
-                        point.longitude,
-                        Utilities.ApiKey,
+                        /*point.latitude,
+                        point.longitude,*/
+                        lat, lon, Utilities.ApiKey,
                         lang,
                         "metric"
                     )
-                    sharedPreferences.edit().putFloat("MapLat",lat.toFloat()).apply()
-                    sharedPreferences.edit().putFloat("MapLon",lon.toFloat()).apply()
-                }
+                    //sharedPreferences.edit().putFloat("MapLat",lat.toFloat()).apply()
+                    //sharedPreferences.edit().putFloat("MapLon",lon.toFloat()).apply()
+               // }
             }
 
             viewModel.weatherLiveData.observe(this, {

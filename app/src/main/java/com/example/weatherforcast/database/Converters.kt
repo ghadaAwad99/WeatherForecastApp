@@ -26,6 +26,6 @@ class Converters {
     @TypeConverter
     fun fromAlertToString(alerts: List<Alerts?>?) = Gson().toJson(alerts)
     @TypeConverter
-    fun fromStringToAlert(stringAlert : String) = Gson().fromJson(stringAlert, Array<Alerts?>::class.java).toList()
+    fun fromStringToAlert(stringAlert : String?) = Gson().fromJson(stringAlert, Array<Alerts?>::class.java)?.toList()
 
 }

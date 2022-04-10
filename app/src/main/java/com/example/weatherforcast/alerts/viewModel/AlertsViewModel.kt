@@ -64,7 +64,6 @@ class AlertsViewModel(private val repository: RepositoryInterface) : ViewModel()
                     smallest = timeInMills - currentTime
                     scheduledAlarm = timeInMills.toString()
                     Log.i("TAG", "FinfResut If $scheduledAlarm")
-
                 }
             }
             if (scheduledAlarm != null) {

@@ -87,9 +87,9 @@ class AlertsWorkManger (private val context : Context, private val params: Worke
             notificationManager.createNotificationChannel(channel)
         }
         val intent = Intent(context, HomeScreen::class.java)
-        val attributes = AudioAttributes.Builder()
+       /* val attributes = AudioAttributes.Builder()
             .setUsage(AudioAttributes.USAGE_NOTIFICATION)
-            .build()
+            .build()*/
 
         val pendingIntent = PendingIntent.getActivity(applicationContext, 1, intent,
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
@@ -99,12 +99,12 @@ class AlertsWorkManger (private val context : Context, private val params: Worke
             .setContentText(keyword)
             .setContentIntent(pendingIntent)
             .setAutoCancel(true)
-            .setSound(
+          /*  .setSound(
                 Uri.parse(
                     ContentResolver.SCHEME_ANDROID_RESOURCE
                         + "://" + context.packageName + "/raw/alert_sound")
                // Uri.parse("android.resource://" + context.packageName + "/" + com.example.weatherforcast.R.raw.alert_sound)
-            )
+            )*/
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
             .setSmallIcon(com.example.weatherforcast.R.drawable.sun_notif)
         assert(notificationManager != null)
