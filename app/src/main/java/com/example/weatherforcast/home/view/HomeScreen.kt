@@ -110,20 +110,19 @@ class HomeScreen : AppCompatActivity() {
 
         if (!isOnline(this)) {
             Toast.makeText(this, "you are offline", Toast.LENGTH_SHORT).show()
-            viewModel.getLastResponseFromRoom().observe(this, {
-                if (it != null) {
-                    initHomeUi(it)
-                }else{
-                    noDataText.visibility = View.VISIBLE
-                }
-            }
-                )
+                viewModel.getLastResponseFromRoom()
+            viewModel.weatherLiveData.observe(this, {
+                it.id = 0
+                viewModel.insertLastResponse(it)
+                Log.d("TAG", "onCreate: ${it.daily}")
+                initHomeUi(it)
+            })
         }else {
             Log.i("TAG", getString(R.string.gps))
             if (choosenLocation == "GPS") {
                 Log.i("TAG", "inside choosenLocation == getString(R.string.gps)")
                 getLastLocation()
-            } else if (choosenLocation == getString(R.string.map)) {
+            } else if (choosenLocation == "Map") {
                 if (intent.extras?.get("point") != null) {
                     var point: LatLng = intent.extras?.get("point") as LatLng
                     Toast.makeText(

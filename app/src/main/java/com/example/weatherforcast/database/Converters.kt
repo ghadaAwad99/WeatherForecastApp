@@ -24,8 +24,8 @@ class Converters {
     fun fromStringToHourlyList(stringHourly : String) = Gson().fromJson(stringHourly, Array<Hourly>::class.java).toList()
 
     @TypeConverter
-    fun fromAlertToString(alerts: Alerts?) = Gson().toJson(alerts)
+    fun fromAlertToString(alerts: List<Alerts?>?) = Gson().toJson(alerts)
     @TypeConverter
-    fun fromStringToAlert(stringAlert : String) = Gson().fromJson(stringAlert, Alerts::class.java)
+    fun fromStringToAlert(stringAlert : String) = Gson().fromJson(stringAlert, Array<Alerts?>::class.java).toList()
 
 }

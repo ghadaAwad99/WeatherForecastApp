@@ -42,8 +42,6 @@ class HomeViewModel(var repository: RepositoryInterface): ViewModel() {
               Log.e("TAG", ex.message.toString())
 
           }
-
-
       }
    }
 
@@ -52,8 +50,11 @@ class HomeViewModel(var repository: RepositoryInterface): ViewModel() {
             repository.insertLastResponse(weatherModel)
         }
     }
-    fun getLastResponseFromRoom(): LiveData<WeatherModel> {
-        return repository.storedResponse
-    }
+    fun getLastResponseFromRoom()=
+        viewModelScope.launch { withContext(Dispatchers.IO){
+            weatherMutableLiveData.postValue(repository.getLastResponseFromDB())
+        } }
+       // return repository.getLastResponseFromDB()
+
 
 }

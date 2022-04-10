@@ -11,7 +11,8 @@ interface RepositoryInterface {
         language: String,
         unit: String ) : Response<WeatherModel>
 
-    val storedResponse: LiveData<WeatherModel>
+   // val storedResponse: LiveData<WeatherModel>
+   suspend fun getLastResponseFromDB() : WeatherModel
 
     val allStoredFavorites: LiveData<List<FavoriteModel>>
 

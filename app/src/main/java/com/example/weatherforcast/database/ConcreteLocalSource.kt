@@ -1,6 +1,7 @@
 package com.example.weatherforcast.database
 
 import android.content.Context
+import android.util.Log
 import androidx.lifecycle.LiveData
 import com.example.weatherforcast.model.FavoriteModel
 import com.example.weatherforcast.model.UserAlarm
@@ -12,7 +13,7 @@ class ConcreteLocalSource(context: Context) : LocalSource {
     override val allStoredFavorites: LiveData<List<FavoriteModel>>
 
     private val weatherDAO: WeatherDAO?
-    override val storedResponse: LiveData<WeatherModel>
+   // val storedResponse: WeatherModel
 
     private val alarmDAO: AlarmDAO?
     override val storedAlarms: LiveData<List<UserAlarm>>
@@ -24,10 +25,15 @@ class ConcreteLocalSource(context: Context) : LocalSource {
         allStoredFavorites = favDAO.getAllFavorites()
 
         weatherDAO = database.weatherDAO()
-        storedResponse = weatherDAO.getLastResponse()
+       // storedResponse = weatherDAO!!.getLastResponse()
 
         alarmDAO = database.alarmDAO()
         storedAlarms = alarmDAO.getAllAlarms()
+    }
+
+    override suspend fun getLastResponseFromDB() : WeatherModel{
+        Log.i("TAG", "inside getLastResponseFromDB concreate local source " + weatherDAO!!.getLastResponse())
+        return  weatherDAO!!.getLastResponse()
     }
 
     override fun insertToFavorite(favoriteModel: FavoriteModel) {
@@ -45,5 +51,6 @@ class ConcreteLocalSource(context: Context) : LocalSource {
     override fun insertAlarm(userAlarm: UserAlarm) {
         alarmDAO?.insertAlarm(userAlarm)
     }
+
 
 }

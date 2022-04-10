@@ -9,7 +9,7 @@ import com.example.weatherforcast.model.FavoriteModel
 import com.example.weatherforcast.model.UserAlarm
 import com.example.weatherforcast.model.WeatherModel
 
-@Database(entities = [FavoriteModel::class , WeatherModel::class, UserAlarm::class], version = 6)
+@Database(entities = [FavoriteModel::class , WeatherModel::class, UserAlarm::class], version = 7)
 @TypeConverters(Converters::class)
 abstract class AppDatabase : RoomDatabase(){
     abstract fun weatherDAO() : WeatherDAO

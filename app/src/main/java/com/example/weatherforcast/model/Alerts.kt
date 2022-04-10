@@ -6,5 +6,5 @@ data class Alerts (
     val start: Double,
     val end: Double,
     val description:String,
-    val tags:String
+    val tags:List<String>
         )

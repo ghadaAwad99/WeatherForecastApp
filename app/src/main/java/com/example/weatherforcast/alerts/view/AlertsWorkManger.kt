@@ -47,32 +47,22 @@ class AlertsWorkManger (private val context : Context, private val params: Worke
         sharedPreferences = context.getSharedPreferences(context.getString(com.example.weatherforcast.R.string.shared_prefs),
             AppCompatActivity.MODE_PRIVATE
         )
-        lang = sharedPreferences.getString("LANGUAGE", "en").toString()
-        choosenLocation = sharedPreferences.getString("LOCATION", context.getString(com.example.weatherforcast.R.string.gps)).toString()
         repository= Repository.getInstance(WeatherService.getInstance(), ConcreteLocalSource(context), context)
-        if (choosenLocation == "GPS") {
-            lat = sharedPreferences.getFloat("GPSLat", 0f)
-            lon = sharedPreferences.getFloat("GPSLon", 0f)
-        } else if (choosenLocation == context.getString(com.example.weatherforcast.R.string.map)) {
-            lat = sharedPreferences.getFloat("MapLat", 0f)
-            lon = sharedPreferences.getFloat("MapLon", 0f)
-        }
-
+        lang = sharedPreferences.getString("LANGUAGE", "en").toString()
         //get lat and long from last stored response in ROOM
-    /*   var currentWeatherResponse : LiveData<WeatherModel> =  repository.storedResponse
-       var lat =  currentWeatherResponse.value?.lat
-       var lon =  currentWeatherResponse.value?.lat*/
+       var currentWeatherResponse : WeatherModel =  repository.getLastResponseFromDB()
+       var lat =  currentWeatherResponse.lat
+       var lon =  currentWeatherResponse.lon
         Log.i("TAG", "Inside do work lat is $lat and long is $lon")
 
         //send request to check for alerts in this location
-                var response = repository.getCurrentWeather(lat.toDouble(), lon.toDouble(), Utilities.ApiKey, lang, "metric")
+        var response = repository.getCurrentWeather(lat, lon, Utilities.ApiKey, lang, "metric")
             if (response.isSuccessful){
-                if (response.body()?.alerts?.description.isNullOrBlank()) {
+                if (response.body()?.alerts?.get(0)?.event.isNullOrBlank()) {
                     displayNotification("There is no alerts for this time")
                     //AlertsViewModel.findNextAlarm()
                 }else{
-                    displayNotification("There is ${response.body()?.alerts?.description.toString()} " +
-                            "and this will last from ${response.body()?.alerts?.start} until ${response.body()?.alerts?.end}" +
+                    displayNotification(" ${response.body()?.alerts?.get(0)?.event.toString()} " +
                             ".Be Careful! ")
                     //AlertsViewModel.findNextAlarm()
                 }
