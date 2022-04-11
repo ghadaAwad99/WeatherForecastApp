@@ -145,9 +145,13 @@ class HomeScreen : AppCompatActivity() {
                         }
                     }
             } else {
-                Toast.makeText(this@HomeScreen, "Please turn on your location", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this@HomeScreen, getString(R.string.turn_on_location), Toast.LENGTH_SHORT).show()
                 val intent = Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)
                 startActivity(intent)
+                lat = sharedPreferences.getFloat("GPSLat", 31.200092f).toDouble()
+                lon = sharedPreferences.getFloat("GPSLon", 29.918739f).toDouble()
+                viewModel.getCurrentWeatherResponse(lat, lon,lang)
+
             }
         } else {
             ActivityCompat.requestPermissions(
@@ -165,7 +169,7 @@ class HomeScreen : AppCompatActivity() {
                     getLastLocation()
                 }
                 else -> {
-                    Toast.makeText(this, "Location Permission is Required", Toast.LENGTH_LONG).show()
+                    Toast.makeText(this, getString(R.string.permission_required), Toast.LENGTH_LONG).show()
                     finish()
                 }
             }

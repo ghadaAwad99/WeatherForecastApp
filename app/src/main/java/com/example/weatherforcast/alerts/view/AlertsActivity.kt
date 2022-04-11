@@ -33,6 +33,7 @@ import com.example.weatherforcast.model.Repository
 import com.example.weatherforcast.model.UserAlarm
 import com.example.weatherforcast.network.WeatherService
 import com.example.weatherforcast.settings.SettingsActivity
+import com.google.android.material.snackbar.Snackbar
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.TimeUnit
@@ -55,6 +56,10 @@ class AlertsActivity : AppCompatActivity(), onDeleteListener {
     lateinit var toggle: ActionBarDrawerToggle
     lateinit var calendar: Calendar
     lateinit var saveAlarmButton: Button
+    lateinit var completeStertDate: String
+    lateinit var completeEndDate: String
+    lateinit var completetTime: String
+
 
     var time: Long = 0
     var finalTime: Long = 0
@@ -62,6 +67,7 @@ class AlertsActivity : AppCompatActivity(), onDeleteListener {
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
+
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
         this.title = getString(R.string.alerts)
@@ -69,7 +75,9 @@ class AlertsActivity : AppCompatActivity(), onDeleteListener {
         binding.daysRecyclerView.adapter = alertAdapter
 
         initSideDrawer()
-        binding.addFab.setOnClickListener { showDialog() }
+        binding.addFab.setOnClickListener {
+            if (Utilities.isOnline(this)) {showDialog()}
+            else { Snackbar.make(binding.addFab,getString(R.string.you_are_offline), Snackbar.LENGTH_LONG ).show()} }
         observeAlarms()
     }
 
@@ -128,15 +136,25 @@ class AlertsActivity : AppCompatActivity(), onDeleteListener {
 
         saveAlarmButton.setOnClickListener {
             calendar = Calendar.getInstance()
-            val startDateInMills = Utilities.convertDateAndTimeToMills(startDate.text.toString())
-            val endDateInMills = Utilities.convertDateAndTimeToMills(endDate.text.toString())
-            val alarmTimeInMills = Utilities.convertDateAndTimeToMills(alarmTime.text.toString())
-            val userAlarm = UserAlarm(0, startDateInMills, endDateInMills, alarmTimeInMills)
-            alarmViewModel.insertAlarm(userAlarm)
-            dialog.dismiss()
-            finish()
-            startActivity(Intent(this, this::class.java))
+            if (startDate.text != getString(R.string.set_start_date)
+                && endDate.text != getString(R.string.set_end_date)
+                && alarmTime.text !=  getString(R.string.set_alert_time) ){
+                    if (completeEndDate > completeStertDate){
+                        val startDateInMills = Utilities.convertDateAndTimeToMills(completeStertDate)
+                        val endDateInMills = Utilities.convertDateAndTimeToMills(completeEndDate)
+                        val alarmTimeInMills = Utilities.convertDateAndTimeToMills(completetTime)
+                        val userAlarm = UserAlarm(0, startDateInMills, endDateInMills, alarmTimeInMills)
+                        alarmViewModel.insertAlarm(userAlarm)
+                        dialog.dismiss()
+                        finish()
+                        startActivity(Intent(this, this::class.java))
+                    }else{
+                        Toast.makeText(this,getString(R.string.end_after_start), Toast.LENGTH_LONG).show()
+                    }
 
+            }else{
+                Toast.makeText(this,getString(R.string.fill_all_fields), Toast.LENGTH_LONG).show()
+            }
         }
 
         val cal = Calendar.getInstance()
@@ -148,11 +166,13 @@ class AlertsActivity : AppCompatActivity(), onDeleteListener {
             val datePickerDialog =
                 DatePickerDialog(this, { datePicker, i, i2, i3 ->
                     val simpleDateFormat = SimpleDateFormat("dd-MM-yyyy HH:mm")
+                    val DateFormat = SimpleDateFormat("dd-MM-yyyy")
                     myYEAR = i
                     myMonth = i2
                     day = i3
                     cal.set(myYEAR, myMonth, day)
-                    startDate.text = simpleDateFormat.format(cal.getTime())
+                    completeStertDate = simpleDateFormat.format(cal.getTime())
+                    startDate.text = DateFormat.format(cal.getTime())
                     val newDate: Calendar = Calendar.getInstance()
                     newDate.set(i, i2, i3)
                 }, myYEAR, myMonth, day)
@@ -163,11 +183,13 @@ class AlertsActivity : AppCompatActivity(), onDeleteListener {
             val datePickerDialog =
                 DatePickerDialog(this, { datePicker, i, i2, i3 ->
                     val simpleDateFormat = SimpleDateFormat("dd-MM-yyyy HH:mm")
+                    val DateFormat = SimpleDateFormat("dd-MM-yyyy")
                     myYEAR = i
                     myMonth = i2
                     day = i3
                     cal.set(myYEAR, myMonth, day)
-                    endDate.text = simpleDateFormat.format(cal.getTime())
+                    completeEndDate = simpleDateFormat.format(cal.getTime())
+                    endDate.text = DateFormat.format(cal.getTime())
                     val newDate: Calendar = Calendar.getInstance()
                     newDate.set(i, i2, i3)
                 }, myYEAR, myMonth, day)
@@ -232,7 +254,9 @@ class AlertsActivity : AppCompatActivity(), onDeleteListener {
             calendar[Calendar.HOUR_OF_DAY] = hourOfDay
             calendar[Calendar.MINUTE] = minute
             val simpleDateFormat = SimpleDateFormat("dd-MM-yyyy HH:mm")
-            alarmTime.setText(simpleDateFormat.format(calendar.getTime()))
+            val TimeFormat = SimpleDateFormat("HH:mm")
+            completetTime = simpleDateFormat.format(calendar.getTime())
+            alarmTime.text = TimeFormat.format(calendar.getTime())
             time = calendar.timeInMillis
             Log.i("selected time ", "selected Time $time")
             currentTime = Calendar.getInstance().timeInMillis

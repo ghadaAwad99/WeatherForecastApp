@@ -80,7 +80,7 @@ class FavoriteItemDetails : AppCompatActivity(), OnClickListener {
                     unit = " ºF"
                 }
                 "kelvin" -> {
-                    temp = (it.current.temp + 273.15).toString()
+                    temp = (it.current.temp + 273).toString()
                     unit = " k"
                 }
             }
@@ -94,7 +94,7 @@ class FavoriteItemDetails : AppCompatActivity(), OnClickListener {
                     unit = " ف"
                 }
                 "kelvin" -> {
-                    temp = Utilities.convertToArabic((it.current.temp + 273.15).toString())
+                    temp = Utilities.convertToArabic((it.current.temp + 273).toString())
                     unit = " ك"
                 }
             }

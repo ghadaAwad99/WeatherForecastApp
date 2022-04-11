@@ -65,8 +65,8 @@ class FavoriteDaysAdapter : RecyclerView.Adapter<FavoriteDaysAdapter.FavDaysView
                     unit = " ف"
                 }
                 "kelvin" -> {
-                    maxTemp = Utilities.convertToArabic((day.temp.max + 273.15).toString())
-                    minTemp = Utilities.convertToArabic((day.temp.min + 273.15).toString())
+                    maxTemp = Utilities.convertToArabic((day.temp.max + 273).toString())
+                    minTemp = Utilities.convertToArabic((day.temp.min + 273).toString())
                     unit = " ك"
                 }
             }
@@ -81,8 +81,8 @@ class FavoriteDaysAdapter : RecyclerView.Adapter<FavoriteDaysAdapter.FavDaysView
                     unit = " ºF"
                 }
                 "kelvin" -> {
-                    maxTemp = (day.temp.max + 273.15).toString()
-                    minTemp = (day.temp.min + 273.15).toString()
+                    maxTemp = (day.temp.max + 273).toString()
+                    minTemp = (day.temp.min + 273).toString()
                     unit = " k"
                 }
             }

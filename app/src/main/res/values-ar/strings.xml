@@ -31,4 +31,10 @@
     <string name="app_name">الطقس</string>
     <string name="you_are_offline">إنك بلا إنترنت. قد لا تكون بعض الوظائف  متاحة.</string>
     <string name="fav_locations">الأماكن المفضلة</string>
+    <string name="set_start_date">اختر تاريخ البداية</string>
+    <string name="set_end_date">اختر تاريخ النهاية</string>
+    <string name="set_alert_time">اختار وقت التنبيه</string>
+    <string name="save">حفظ</string>
+    <string name="end_after_start">يجب أن يسبق تاريخ البداية تاريخ النهاية</string>
+    <string name="fill_all_fields">قم بملء جميع الحقول المطلوبة</string>
 </resources>

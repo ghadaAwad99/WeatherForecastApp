@@ -60,7 +60,7 @@ class FavoriteHoursAdapter : RecyclerView.Adapter<FavHoursViewHolder>(){
                     unit = " ف"
                 }
                 "kelvin" -> {
-                    temp = Utilities.convertToArabic((currentHour.temp + 273.15).toString())
+                    temp = Utilities.convertToArabic((currentHour.temp + 273).toString())
                     unit = " ك"
                 }
             }
@@ -83,7 +83,7 @@ class FavoriteHoursAdapter : RecyclerView.Adapter<FavHoursViewHolder>(){
                     unit = " ºF"
                 }
                 "kelvin" -> {
-                    temp = (currentHour.temp + 273.15).toString()
+                    temp = (currentHour.temp + 273).toString()
                     unit = " k"
                 }
             }

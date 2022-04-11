@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">WeatherForcast</string>
+    <string name="app_name">Cloudy</string>
     <string name="close" translatable="false">close</string>
     <string name="open" translatable="false">open</string>
     <!-- TODO: Remove or change this placeholder text -->
@@ -35,4 +35,12 @@
     <string name="toast_deleted">This Place is Deleted</string>
     <string name="you_are_offline">You are offline. Some functionality may be unavailable.</string>
     <string name="fav_locations">Favorite Locations</string>
+    <string name="set_start_date">set start date</string>
+    <string name="set_end_date">set end date</string>
+    <string name="set_alert_time">set alert time</string>
+    <string name="save">save</string>
+    <string name="end_after_start">end date must come after start date</string>
+    <string name="fill_all_fields">Please fill all the fields</string>
+    <string name="turn_on_location">Please turn on your location</string>
+    <string name="permission_required">Location Permission is Required</string>
 </resources>
