@@ -120,4 +120,18 @@ object Utilities : AppCompatActivity() {
         return false
     }
 
+    fun convertTimeInMillesToMinutes(time:Long) : String{
+        val myDate = Date(time)
+        val formatter = SimpleDateFormat("hh:mm a")
+        val myTime = formatter.format(myDate)
+        return myTime
+    }
+
+    fun convertDateInMillsToDate(date:Long) : String{
+        val myDate = Date(date)
+        val formatter = SimpleDateFormat("dd/M/yyyy")
+        val myTime = formatter.format(myDate)
+        return myTime
+    }
+
 }

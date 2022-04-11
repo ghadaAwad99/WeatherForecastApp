@@ -37,7 +37,7 @@ import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.TimeUnit
 
-class AlertsActivity : AppCompatActivity() {
+class AlertsActivity : AppCompatActivity(), onDeleteListener {
     private val binding by lazy { ActivityAlertsBinding.inflate(layoutInflater) }
     private val alarmViewModel by lazy { ViewModelProvider(
         this, factory = AlertsViewModelFactory(
@@ -46,6 +46,8 @@ class AlertsActivity : AppCompatActivity() {
             )
         )
     ).get(AlertsViewModel::class.java) }
+
+    private val alertAdapter by lazy { AlertsRecyclerAdapter(this) }
 
     lateinit var startDate: TextView
     lateinit var endDate: TextView
@@ -58,10 +60,13 @@ class AlertsActivity : AppCompatActivity() {
     var finalTime: Long = 0
     var currentTime: Long = 0
 
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
         this.title = getString(R.string.alerts)
+
+        binding.daysRecyclerView.adapter = alertAdapter
 
         initSideDrawer()
         binding.addFab.setOnClickListener { showDialog() }
@@ -73,10 +78,11 @@ class AlertsActivity : AppCompatActivity() {
         alarmViewModel.getAllAlarms()
 
         alarmViewModel.alarmsLiveData.observe(this, {
+
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                Log.i("TAG", "it alarm time is ${it[0].alarmTime} and it $it")
                 setAlarmsListForManager(it)
                 findNextAlarm()
+                alertAdapter.setAlertsList(it)
             }
         })
     }
@@ -93,15 +99,9 @@ class AlertsActivity : AppCompatActivity() {
         binding.navView.setNavigationItemSelectedListener {
             when (it.itemId) {
                 R.id.nav_home -> startActivity(Intent(this@AlertsActivity, HomeScreen::class.java))
-                R.id.nav_settings -> startActivity(
-                    Intent(this@AlertsActivity, SettingsActivity::class.java)
-                )
-                R.id.nav_favorite -> startActivity(
-                    Intent(this@AlertsActivity, FavoriteActivity::class.java)
-                )
-                R.id.nav_alerts -> startActivity(
-                    Intent(this@AlertsActivity, AlertsActivity::class.java)
-                )
+                R.id.nav_settings -> startActivity(Intent(this@AlertsActivity, SettingsActivity::class.java))
+                R.id.nav_favorite -> startActivity(Intent(this@AlertsActivity, FavoriteActivity::class.java))
+                R.id.nav_alerts -> startActivity(Intent(this@AlertsActivity, AlertsActivity::class.java))
             }
             true
         }
@@ -114,6 +114,7 @@ class AlertsActivity : AppCompatActivity() {
         return super.onOptionsItemSelected(item)
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     private fun showDialog() {
 
         val dialog = Dialog(this)
@@ -133,8 +134,9 @@ class AlertsActivity : AppCompatActivity() {
             val userAlarm = UserAlarm(0, startDateInMills, endDateInMills, alarmTimeInMills)
             alarmViewModel.insertAlarm(userAlarm)
             dialog.dismiss()
-            startActivity(Intent(this, AlertsActivity::class.java))
             finish()
+            startActivity(Intent(this, this::class.java))
+
         }
 
         val cal = Calendar.getInstance()
@@ -190,7 +192,7 @@ class AlertsActivity : AppCompatActivity() {
 
         @RequiresApi(api = Build.VERSION_CODES.O)
         fun findNextAlarm() {
-            // WorkManager.getInstance().cancelAllWorkByTag("alarms")
+             //WorkManager.getInstance().cancelAllWorkByTag("alarms")
             val currentTime = Calendar.getInstance().timeInMillis
             Log.i("TAG", "current time$currentTime")
             var smallest = currentTime
@@ -216,11 +218,8 @@ class AlertsActivity : AppCompatActivity() {
                 val currentTime = Calendar.getInstance().timeInMillis
                 Log.i("TAG", "In side smallest reminder method")
                 val finalTime = timeInMills - currentTime
-                val data = Data.Builder().build()
                 val reminderRequest = OneTimeWorkRequest.Builder(AlertsWorkManger::class.java)
                     .setInitialDelay(finalTime, TimeUnit.MILLISECONDS)
-                    .setInputData(data)
-                    .addTag("alarms")
                     .build()
                 WorkManager.getInstance().enqueue(reminderRequest)
             }
@@ -240,4 +239,8 @@ class AlertsActivity : AppCompatActivity() {
             finalTime = time - currentTime
             Log.i("finalTime ", "finalTime $finalTime")
         }
+
+    override fun onDeleteClick(alarm: UserAlarm) {
+        alarmViewModel.deleteAlarm(alarm)
+    }
 }

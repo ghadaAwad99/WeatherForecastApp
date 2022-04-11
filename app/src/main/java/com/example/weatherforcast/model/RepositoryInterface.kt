@@ -1,6 +1,9 @@
 package com.example.weatherforcast.model
 
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import retrofit2.Response
 
 interface RepositoryInterface {
@@ -21,6 +24,8 @@ interface RepositoryInterface {
     fun insertToFavorite(favoriteModel: FavoriteModel)
 
     fun deleteFromFavorite(favoriteModel: FavoriteModel)
+
+    fun deleteAlarm(alarm: UserAlarm)
 
     fun insertLastResponse(weatherModel: WeatherModel)
 

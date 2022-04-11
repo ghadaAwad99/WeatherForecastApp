@@ -56,17 +56,20 @@ class HomeDaysRecyclerAdapter : RecyclerView.Adapter<DaysViewHolder>() {
 
         if (lang.equals("ar")) {
              when(sharedPrefsTemp ){
-                "celsius" ->{ maxTemp = Utilities.convertToArabic(day.temp.max.toString())
-                    minTemp = Utilities.convertToArabic(day.temp.min.toString())
+
+                "celsius" ->{ maxTemp =Utilities.convertToArabic(String.format("%.1f", (day.temp.max)))
+                    minTemp = Utilities.convertToArabic(String.format("%.1f", (day.temp.min)))
                     unit = " ºC"}
                 "fehrenheit" -> {
-                    maxTemp = Utilities.convertToArabic((day.temp.max/2+30).toString())
-                    minTemp = Utilities.convertToArabic((day.temp.min/2+30).toString())
+
+                    maxTemp = Utilities.convertToArabic(String.format("%.1f", (day.temp.max/2+30)))
+                    minTemp = Utilities.convertToArabic(String.format("%.1f", (day.temp.min/2+30)))
                     unit = " ف"
                 }
                 "kelvin" -> {
-                    maxTemp = Utilities.convertToArabic((day.temp.max + 273.15).toString())
-                    minTemp = Utilities.convertToArabic((day.temp.min + 273.15).toString())
+
+                    maxTemp = Utilities.convertToArabic(String.format("%.1f", (day.temp.max + 273)))
+                    minTemp = Utilities.convertToArabic(String.format("%.1f", (day.temp.min + 273)))
                     unit = " ك"
                 }
             }
@@ -76,13 +79,15 @@ class HomeDaysRecyclerAdapter : RecyclerView.Adapter<DaysViewHolder>() {
                     minTemp = day.temp.min.toString()
                     unit = " ºC"}
                 "fehrenheit" -> {
-                    maxTemp = (day.temp.max/2+30).toString()
-                    minTemp = (day.temp.min/2+30).toString()
+
+                    maxTemp = String.format("%.0f",(day.temp.max/2+30));
+                    minTemp = String.format("%.0f",(day.temp.min/2+30));
                     unit = " ºF"
                 }
                 "kelvin" -> {
-                    maxTemp = (day.temp.max + 273.15).toString()
-                    minTemp = (day.temp.min + 273.15).toString()
+
+                    maxTemp = String.format("%.0f",(day.temp.max + 273));
+                    minTemp = String.format("%.0f",(day.temp.min + 273));
                     unit = " k"
                 }
             }

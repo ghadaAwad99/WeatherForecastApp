@@ -54,21 +54,26 @@ class HomeHoursRecyclerAdapter : RecyclerView.Adapter<HoursViewHolder>(){
                 "celsius" ->{ temp = Utilities.convertToArabic(currentHour.temp.toString())
                      unit = " ºC"}
                 "fehrenheit" -> {
-                    temp = Utilities.convertToArabic((currentHour.temp/2+30).toString())
+
+                    temp = Utilities.convertToArabic(String.format("%.1f", (currentHour.temp/2+30)))
                      unit = " ف"
                 }
                 "kelvin" -> {
-                    temp = Utilities.convertToArabic((currentHour.temp + 273.15).toString())
+
+
+                    temp =  Utilities.convertToArabic(String.format("%.1f", (currentHour.temp + 273)))
                     unit = " ك"
                 }
             }
             when(wind){
                 "meter_sec" -> {
-                    windSpeed = Utilities.convertToArabic(currentHour.wind_speed.toString())
+
+                    windSpeed = Utilities.convertToArabic(String.format("%.1f", (currentHour.wind_speed + 273)))
                     windUnit = "م/ث"
                 }
                 "miles_hour" -> {
-                    windSpeed = Utilities.convertToArabic((currentHour.wind_speed * 2).toString())
+
+                    windSpeed = Utilities.convertToArabic(String.format("%.1f", (currentHour.wind_speed * 2)))
                     windUnit = "م/س"
                 }
             }
@@ -77,11 +82,12 @@ class HomeHoursRecyclerAdapter : RecyclerView.Adapter<HoursViewHolder>(){
                 "celsius" ->{ temp = currentHour.temp.toString()
                     unit = " ºC"}
                 "fehrenheit" -> {
-                    temp = (currentHour.temp/2+30).toString()
+                    temp = String.format("%.1f",(currentHour.temp /2+30));
                     unit = " ºF"
                 }
                 "kelvin" -> {
-                    temp = (currentHour.temp + 273.15).toString()
+
+                    temp = String.format("%.1f",(currentHour.temp + 273));
                     unit = " k"
                 }
             }

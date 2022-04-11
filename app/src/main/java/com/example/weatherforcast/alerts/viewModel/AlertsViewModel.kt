@@ -39,6 +39,12 @@ class AlertsViewModel(private val repository: RepositoryInterface) : ViewModel()
                 alarmsMutableLiveData.postValue(repository.getAllStoredAlarms())
             }
         }
+
+    fun deleteAlarm(alarm: UserAlarm){
+        viewModelScope.launch(Dispatchers.IO) {
+            repository.deleteAlarm(alarm)
+        }
+    }
     }
 
 

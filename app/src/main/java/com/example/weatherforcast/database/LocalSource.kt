@@ -11,6 +11,7 @@ interface LocalSource {
     val allStoredFavorites: LiveData<List<FavoriteModel>>
     fun insertToFavorite(favoriteModel: FavoriteModel)
     fun deleteFromFavorite(favoriteModel: FavoriteModel)
+    fun deleteAlarm(alarm: UserAlarm)
     fun insertLastResponse(weatherModel: WeatherModel)
     suspend fun getLastResponseFromDB() : WeatherModel
     suspend fun getStoredAlarms() : List<UserAlarm>

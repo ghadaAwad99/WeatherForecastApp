@@ -241,7 +241,7 @@ class HomeScreen : AppCompatActivity() {
                         unit = " ºF"
                     }
                     "kelvin" -> {
-                        temp = (it.current.temp + 273).toString()
+                        temp = (it.current.temp + 273).toInt().toString()
                         unit = " k"
                     }
                 }

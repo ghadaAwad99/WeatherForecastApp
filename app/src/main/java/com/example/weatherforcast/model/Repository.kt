@@ -5,6 +5,7 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import com.example.weatherforcast.database.LocalSource
 import com.example.weatherforcast.network.WeatherInterface
+import kotlinx.coroutines.Dispatchers
 
 class Repository private constructor(
     private val weatherInterface: WeatherInterface,
@@ -41,6 +42,7 @@ class Repository private constructor(
     override fun insertToFavorite(favoriteModel: FavoriteModel) = localSource.insertToFavorite(favoriteModel)
 
     override fun deleteFromFavorite(favoriteModel: FavoriteModel) = localSource.deleteFromFavorite(favoriteModel)
+    override fun deleteAlarm(alarm: UserAlarm) = localSource.deleteAlarm(alarm)
 
     override fun insertLastResponse(weatherModel: WeatherModel)=localSource.insertLastResponse(weatherModel)
 

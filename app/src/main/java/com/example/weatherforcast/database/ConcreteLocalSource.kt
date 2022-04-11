@@ -41,6 +41,10 @@ class ConcreteLocalSource(context: Context) : LocalSource {
         favDAO?.deleteFromFavorite(favoriteModel)
     }
 
+    override fun deleteAlarm(alarm: UserAlarm) {
+        alarmDAO!!.deleteAlarm(alarm)
+    }
+
     override fun insertLastResponse(weatherModel: WeatherModel) {
         weatherDAO?.insertLastResponse(weatherModel)
     }

@@ -12,7 +12,7 @@
         <entry key="..\:/Ghada/ITI/Kotlin/WeatherForcast/app/src/main/res/drawable/ic_tornado_.xml" value="0.2703125" />
         <entry key="..\:/Ghada/ITI/Kotlin/WeatherForcast/app/src/main/res/drawable/ripple.xml" value="0.2703125" />
         <entry key="..\:/Ghada/ITI/Kotlin/WeatherForcast/app/src/main/res/layout-v28/activity_main.xml" value="0.25416666666666665" />
-        <entry key="..\:/Ghada/ITI/Kotlin/WeatherForcast/app/src/main/res/layout/activity_alerts.xml" value="0.536" />
+        <entry key="..\:/Ghada/ITI/Kotlin/WeatherForcast/app/src/main/res/layout/activity_alerts.xml" value="0.3304178814382896" />
         <entry key="..\:/Ghada/ITI/Kotlin/WeatherForcast/app/src/main/res/layout/activity_drawer.xml" value="0.25416666666666665" />
         <entry key="..\:/Ghada/ITI/Kotlin/WeatherForcast/app/src/main/res/layout/activity_favorite.xml" value="0.28892835997631733" />
         <entry key="..\:/Ghada/ITI/Kotlin/WeatherForcast/app/src/main/res/layout/activity_favorite_item_details.xml" value="0.25416666666666665" />
@@ -20,6 +20,7 @@
         <entry key="..\:/Ghada/ITI/Kotlin/WeatherForcast/app/src/main/res/layout/activity_main.xml" value="0.2853107344632768" />
         <entry key="..\:/Ghada/ITI/Kotlin/WeatherForcast/app/src/main/res/layout/activity_settings.xml" value="0.1" />
         <entry key="..\:/Ghada/ITI/Kotlin/WeatherForcast/app/src/main/res/layout/activity_splash_screen.xml" value="0.264" />
+        <entry key="..\:/Ghada/ITI/Kotlin/WeatherForcast/app/src/main/res/layout/alarm_item.xml" value="0.536" />
         <entry key="..\:/Ghada/ITI/Kotlin/WeatherForcast/app/src/main/res/layout/alert_custom_dialog.xml" value="0.4" />
         <entry key="..\:/Ghada/ITI/Kotlin/WeatherForcast/app/src/main/res/layout/customborder.xml" value="0.25416666666666665" />
         <entry key="..\:/Ghada/ITI/Kotlin/WeatherForcast/app/src/main/res/layout/day_item.xml" value="0.6941340782122905" />
