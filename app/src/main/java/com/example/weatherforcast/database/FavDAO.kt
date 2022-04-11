@@ -18,8 +18,4 @@ interface FavDAO {
     @Delete
     fun deleteFromFavorite(favoriteModel: FavoriteModel)
 
-    /*@Query("SELECT * FROM favorite WHERE locality = :city")
-    fun getFavoritePlace(city:String)*/
-
-
 }

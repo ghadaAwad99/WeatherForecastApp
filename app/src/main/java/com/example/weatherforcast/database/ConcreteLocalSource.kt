@@ -11,12 +11,8 @@ class ConcreteLocalSource(context: Context) : LocalSource {
 
     private val favDAO: FavDAO?
     override val allStoredFavorites: LiveData<List<FavoriteModel>>
-
     private val weatherDAO: WeatherDAO?
-   // val storedResponse: WeatherModel
-
     private val alarmDAO: AlarmDAO?
-    override val storedAlarms: LiveData<List<UserAlarm>>
 
     init {
         val database: AppDatabase = AppDatabase.getInstance(context)
@@ -25,16 +21,17 @@ class ConcreteLocalSource(context: Context) : LocalSource {
         allStoredFavorites = favDAO.getAllFavorites()
 
         weatherDAO = database.weatherDAO()
-       // storedResponse = weatherDAO!!.getLastResponse()
 
         alarmDAO = database.alarmDAO()
-        storedAlarms = alarmDAO.getAllAlarms()
     }
 
     override suspend fun getLastResponseFromDB() : WeatherModel{
         Log.i("TAG", "inside getLastResponseFromDB concreate local source " + weatherDAO!!.getLastResponse())
         return  weatherDAO!!.getLastResponse()
     }
+
+    override suspend fun getStoredAlarms(): List<UserAlarm> = alarmDAO!!.getAllAlarms()
+
 
     override fun insertToFavorite(favoriteModel: FavoriteModel) {
         favDAO?.insertToFavorite(favoriteModel)

@@ -4,6 +4,8 @@ import android.content.Context
 import android.content.Intent
 import android.location.Address
 import android.location.Geocoder
+import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
 import android.util.Log
 import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
@@ -16,7 +18,9 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 object Utilities : AppCompatActivity() {
+
     val ApiKey = "8bdc89e28e3ae5c674e20f1d16e70f7d"
+
     fun changeLanguage(lang:String, context: Context){
         val config = context.resources.configuration
 
@@ -97,23 +101,23 @@ object Utilities : AppCompatActivity() {
         return timeInMilliseconds
     }
 
-
-    fun convertFinalTime(timeAndDate: String?): Long {
-        // String timeAndDate = day +"-" + month+"-" + year+" " + hour +":" + minutes ; ;// /-03-2022 12:34";//
-        val currentTime = Calendar.getInstance().timeInMillis
-        val sdf = SimpleDateFormat("dd-MM-yyyy hh:mm")
-        val timeInMilliseconds: Long
-        var mDate: Date? = null
-        try {
-            mDate = sdf.parse(timeAndDate)
-        } catch (e: ParseException) {
-            e.printStackTrace()
+    fun isOnline(context: Context): Boolean {
+        val connectivityManager =
+            context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        if (connectivityManager != null) {
+            val capabilities =
+                connectivityManager.getNetworkCapabilities(connectivityManager.activeNetwork)
+            if (capabilities != null) {
+                if (capabilities.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR)) {
+                    return true
+                } else if (capabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI)) {
+                    return true
+                } else if (capabilities.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET)) {
+                    return true
+                }
+            }
         }
-        Log.i("TAG", "Date m datee: $mDate")
-        timeInMilliseconds = mDate!!.time
-        println("Date in milli :: $timeInMilliseconds")
-        val finalTime = timeInMilliseconds - currentTime
-        Log.i("TAG", "final time $finalTime")
-        return finalTime
+        return false
     }
+
 }

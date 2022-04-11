@@ -50,16 +50,13 @@ android:id="@+id/drawerLayout"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <TextView
-        android:id="@+id/no_data_taxt"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-android:visibility="gone"
-        android:layout_marginStart="1dp"
-        android:layout_marginEnd="240dp"
-        android:layout_marginBottom="1dp"
-        android:text="NO DATA NO CONNECTION"
-        app:layout_constraintBottom_toTopOf="@+id/temp_cardView"
+    <ImageView
+        android:id="@+id/no_data_image"
+        android:visibility="gone"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:src="@drawable/no_wifi"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />

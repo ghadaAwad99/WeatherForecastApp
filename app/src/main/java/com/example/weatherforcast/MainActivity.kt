@@ -25,36 +25,6 @@ class MainActivity : AppCompatActivity() {
         locationRadioGroup = findViewById(R.id.location_radio_group)
         val sharedPreferences = getSharedPreferences(getString(R.string.shared_prefs), MODE_PRIVATE)
         val editor = sharedPreferences.edit()
-        //set language as the last selected
-       /* var lang = sharedPreferences.getString("LANGUAGE", "en")
-        val config = resources.configuration
-
-        val locale = Locale(lang)
-        Locale.setDefault(locale)
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1)
-            config.setLocale(locale)
-        else
-            config.locale = locale
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N)
-            createConfigurationContext(config)
-        resources.updateConfiguration(config, resources.displayMetrics)*/
-
-      /*  val lang = sharedPreferences.getString("LANGUAGE", "en")
-
-        val config = this.resources.configuration
-
-        val locale = Locale(lang)
-        Locale.setDefault(locale)
-        config.setLocale(locale)
-
-        this.createConfigurationContext(config)
-        this.resources.updateConfiguration(config, this.resources.displayMetrics)
-
-        this.startActivity(Intent(this, MainActivity::class.java))*/
-        //finish()
-
-        //Utilities.changeLanguage(lang.toString(), this)
 
         locationRadioGroup.setOnCheckedChangeListener { group, checkedId ->
             locationRadioButton = findViewById<View>(checkedId) as RadioButton
@@ -78,12 +48,6 @@ class MainActivity : AppCompatActivity() {
             }
 
         }
-
-
-
-
-
-        val radioGroup: RadioGroup = findViewById(R.id.location_radio_group)
 
         val actionBar: ActionBar = supportActionBar!!
         val colorDrawable = ColorDrawable(Color.parseColor("#5B86E5"))

@@ -29,5 +29,4 @@ abstract class AppDatabase : RoomDatabase(){
     }
 }
 
-//Two tables: one for favorite and one for the last response to be shown when offline
 

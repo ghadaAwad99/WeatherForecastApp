@@ -32,18 +32,11 @@ class Repository private constructor(
         }
     }
 
-   // override val storedResponse: LiveData<WeatherModel> = localSource.storedResponse
-
-    override suspend fun getLastResponseFromDB() : WeatherModel{
-        Log.i("TAG", "inside getLastResponseFromDB repo " + localSource.getLastResponseFromDB())
-       return localSource.getLastResponseFromDB()
-    }
-
-
+    override suspend fun getLastResponseFromDB() = localSource.getLastResponseFromDB()
 
     override val allStoredFavorites: LiveData<List<FavoriteModel>> = localSource.allStoredFavorites
 
-    override val allStoredAlarms: LiveData<List<UserAlarm>> = localSource.storedAlarms
+    override suspend fun getAllStoredAlarms(): List<UserAlarm> = localSource.getStoredAlarms()
 
     override fun insertToFavorite(favoriteModel: FavoriteModel) = localSource.insertToFavorite(favoriteModel)
 

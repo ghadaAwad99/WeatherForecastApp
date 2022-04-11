@@ -24,6 +24,5 @@ data class WeatherModel(
     @Nullable
     @ColumnInfo(name = "alerts" , defaultValue = "ALERTS")
     val alerts: List<Alerts?>? = null
-    //val timezone: String,
-    //val timezone_offset: Double
+
 )

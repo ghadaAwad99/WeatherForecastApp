@@ -9,6 +9,7 @@ import android.net.NetworkCapabilities
 import android.os.Bundle
 import android.util.Log
 import android.view.MenuItem
+import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.ActionBar
 import androidx.appcompat.app.ActionBarDrawerToggle
@@ -17,8 +18,10 @@ import androidx.drawerlayout.widget.DrawerLayout
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.RecyclerView
 import com.example.weatherforcast.R
+import com.example.weatherforcast.Utilities
 import com.example.weatherforcast.alerts.view.AlertsActivity
 import com.example.weatherforcast.database.ConcreteLocalSource
+import com.example.weatherforcast.databinding.ActivityFavoriteBinding
 import com.example.weatherforcast.favorite.viewModel.FavoriteViewModel
 import com.example.weatherforcast.favorite.viewModel.FavoriteViewModelFactory
 import com.example.weatherforcast.home.view.HomeScreen
@@ -30,60 +33,38 @@ import com.example.weatherforcast.settings.SettingsActivity
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.navigation.NavigationView
+import com.google.android.material.snackbar.Snackbar
 
 class FavoriteActivity : AppCompatActivity(), OnClickListener {
+    private val binding by lazy { ActivityFavoriteBinding.inflate(layoutInflater) }
 
-    lateinit var toggle: ActionBarDrawerToggle
-    lateinit var drawerLayout: DrawerLayout
-    lateinit var navView: NavigationView
-    lateinit var favoriteViewModel: FavoriteViewModel
-    lateinit var favoriteRecyclerAdapter: FavoriteRecyclerAdapter
-    lateinit var favoriteRecyclerView: RecyclerView
-    lateinit var floatingActionButton: FloatingActionButton
+    private val toggle by lazy { ActionBarDrawerToggle(this, binding.drawerLayout, R.string.open, R.string.close) }
+    private val favoriteViewModel by lazy { ViewModelProvider(
+        this, factory = FavoriteViewModelFactory(
+            Repository.getInstance(
+                WeatherService.getInstance(), ConcreteLocalSource(this), this)))
+        .get(FavoriteViewModel::class.java) }
+    private val favoriteRecyclerAdapter by lazy { FavoriteRecyclerAdapter(this) }
     lateinit var outIntent: Intent
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_favorite)
-        this.title = "Favorite Locations"
-        val actionBar: ActionBar = supportActionBar!!
-        val colorDrawable = ColorDrawable(Color.parseColor("#5B86E5"))
-        actionBar.setBackgroundDrawable(colorDrawable)
+        setContentView(binding.root)
+        this.title = getString(R.string.fav_locations)
 
-        drawerLayout = findViewById(R.id.drawerLayout)
-        navView = findViewById(R.id.nav_view)
-        favoriteRecyclerView = findViewById(R.id.days_recyclerView)
-        floatingActionButton = findViewById(R.id.add_fab)
+        initSideDrawer()
 
-        toggle = ActionBarDrawerToggle(this, drawerLayout, R.string.open, R.string.close)
-        drawerLayout.addDrawerListener(toggle)
-        toggle.syncState()
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        navView.setNavigationItemSelectedListener {
-            when (it.itemId) {
-                R.id.nav_home -> startActivity(Intent(this@FavoriteActivity, HomeScreen::class.java))
-                R.id.nav_settings -> startActivity(Intent(this@FavoriteActivity, SettingsActivity::class.java))
-                R.id.nav_favorite -> startActivity(Intent(this@FavoriteActivity, FavoriteActivity::class.java))
-                R.id.nav_alerts -> startActivity(Intent(this@FavoriteActivity, AlertsActivity::class.java))
+        binding.addFab.setOnClickListener {
+            if (Utilities.isOnline(this)) {
+                outIntent = Intent(this, MapsActivity::class.java)
+                outIntent.putExtra("source", "FAV")
+                startActivity(outIntent)
+            }else{
+                Snackbar.make(binding.addFab,getString(R.string.you_are_offline), Snackbar.LENGTH_LONG ).show()
             }
-            true
         }
 
-        floatingActionButton.setOnClickListener {
-            outIntent = Intent(this, MapsActivity::class.java)
-            outIntent.putExtra("source", "FAV")
-            startActivity(outIntent)
-        }
-
-        favoriteRecyclerAdapter = FavoriteRecyclerAdapter(this)
-        favoriteRecyclerView.adapter = favoriteRecyclerAdapter
-
-        favoriteViewModel = ViewModelProvider(
-            this, factory = FavoriteViewModelFactory(
-                Repository.getInstance(
-                    WeatherService.getInstance(), ConcreteLocalSource(this), this)))
-                    .get(FavoriteViewModel::class.java)
-
+        binding.daysRecyclerView.adapter = favoriteRecyclerAdapter
 
         if (intent.extras?.get("point") != null && intent.extras?.get("locality") != null){
             var point: LatLng = intent.extras!!.get("point") as LatLng
@@ -94,9 +75,28 @@ class FavoriteActivity : AppCompatActivity(), OnClickListener {
         }
 
         favoriteViewModel.getAllFavorite().observe(this) {
-            if (it != null) favoriteRecyclerAdapter.setFavoriteList(it)
+            if (it != null) {favoriteRecyclerAdapter.setFavoriteList(it) }
         }
 
+    }
+
+    private fun initSideDrawer(){
+        val actionBar: ActionBar = supportActionBar!!
+        val colorDrawable = ColorDrawable(Color.parseColor("#5B86E5"))
+        actionBar.setBackgroundDrawable(colorDrawable)
+
+        binding.drawerLayout.addDrawerListener(toggle)
+        toggle.syncState()
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        binding.navView.setNavigationItemSelectedListener {
+            when (it.itemId) {
+                R.id.nav_home -> startActivity(Intent(this@FavoriteActivity, HomeScreen::class.java))
+                R.id.nav_settings -> startActivity(Intent(this@FavoriteActivity, SettingsActivity::class.java))
+                R.id.nav_favorite -> startActivity(Intent(this@FavoriteActivity, FavoriteActivity::class.java))
+                R.id.nav_alerts -> startActivity(Intent(this@FavoriteActivity, AlertsActivity::class.java))
+            }
+            true
+        }
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -114,7 +114,6 @@ class FavoriteActivity : AppCompatActivity(), OnClickListener {
     override fun onDisplayClick(favoriteModel: FavoriteModel) {
         var favIntent = Intent(this, FavoriteItemDetails::class.java)
         favIntent.putExtra("favorite model", favoriteModel)
-        //Toast.makeText(this, "you clicked " + favoriteModel.lat + favoriteModel.lon, Toast.LENGTH_SHORT).show()
         startActivity(favIntent)
     }
 

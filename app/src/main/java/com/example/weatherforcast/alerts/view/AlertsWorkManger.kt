@@ -43,12 +43,14 @@ class AlertsWorkManger (private val context : Context, private val params: Worke
 
 
 
+    @RequiresApi(Build.VERSION_CODES.O)
     override suspend fun doWork(): Result {
         sharedPreferences = context.getSharedPreferences(context.getString(com.example.weatherforcast.R.string.shared_prefs),
             AppCompatActivity.MODE_PRIVATE
         )
         repository= Repository.getInstance(WeatherService.getInstance(), ConcreteLocalSource(context), context)
         lang = sharedPreferences.getString("LANGUAGE", "en").toString()
+
         //get lat and long from last stored response in ROOM
        var currentWeatherResponse : WeatherModel =  repository.getLastResponseFromDB()
        var lat =  currentWeatherResponse.lat
@@ -60,16 +62,15 @@ class AlertsWorkManger (private val context : Context, private val params: Worke
             if (response.isSuccessful){
                 if (response.body()?.alerts?.get(0)?.event.isNullOrBlank()) {
                     displayNotification("There is no alerts for this time")
-                    //AlertsViewModel.findNextAlarm()
+                    AlertsActivity.findNextAlarm()
                 }else{
                     displayNotification(" ${response.body()?.alerts?.get(0)?.event.toString()} " +
                             ".Be Careful! ")
-                    //AlertsViewModel.findNextAlarm()
+                    AlertsActivity.findNextAlarm()
                 }
             }else{
                 Log.e("WorkManager", "Error fetching data in HomeViewModel " + response.message())
             }
-
 
         return Result.success()
     }
