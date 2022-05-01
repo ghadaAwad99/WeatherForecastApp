@@ -1,5 +1,12 @@
 # Weather Forecast Application
-"Cloudy" is an android weather forecast application built using MVVM architectural design pattern.
+"Cloudy" is an android weather forecast application hat displays weather status in your location or any location from your choise with multiple features.
+
+## Built With
+- MVVM architectural design pattern.
+- Retrofit
+- ROOM
+- Coroutines
+- LiveData
 
 ## Features
 - Detect the weather in your current location for the moment and for the future 48 hours and 7 days.
@@ -7,6 +14,7 @@
 - Add certain places to your favorite and follow the weather conditions in these places.
 - Add reminders to check if there is any national weather alerts from major national weather warning systems in a certain period and time from your choice.
 - Change the language, temperature units, wind speed units upon your preferences.
+- Display the last fetched weather status when in offline mode.
 
 ## "Cloudy" Screens
 
