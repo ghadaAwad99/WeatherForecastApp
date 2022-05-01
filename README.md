@@ -6,6 +6,7 @@
 - Retrofit
 - ROOM
 - Coroutines
+- CoroutineWorker
 - LiveData
 
 ## Features
